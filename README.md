@@ -634,7 +634,7 @@ Handy for working with Booleans trapped in Strings.
 
 Returns a normalised Boolean value for a String, Number, null or undefined.
 
-Everything will return `true`, except for the followingm which all return `false`:
+Everything will return `true`, except for the following which all return `false`:
 
 ```javascript
 
@@ -652,7 +652,8 @@ Everything will return `true`, except for the followingm which all return `false
 
 ```
 
-### GET: Function.prototype.__name__:String
+### GET: Function.prototype.\_\_name\_\_:String
+### GET: Function.prototype.\_\_name\_\_:String
 Tries to return the name of a Function instance. If a function is mimicking another function, then that function's name is returned.
 
 If no name can be resolved, then `anonymous` is returned.
@@ -744,7 +745,7 @@ Returns the `values` of the passed Object based on it's enumerable keys.
 
 ```
 
-### GET: Object.prototype.__type__:String
+### GET: Object.prototype.\_\_type\_\_:String
 Attempts to resolve a normalised type for any type that inherits from JavaScript's `Object.prototype`. See `m8.type` for more information.
 
 **NOTE:** All types are **always** in lowercase
