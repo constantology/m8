@@ -1,0 +1,10 @@
+{
+	"encoding"  : "UTF-8",
+	"ext"       : "js",
+	"file_err"  : "continue",
+	"out"       : { "dir" : "./", "file" : "m8", "min" : "m8.min" },
+	"src" : {
+		"dir"   : "./src",
+		"files" : [".begin", "m8.vars", "m8", "m8.x", ".end"]
+	}
+}
