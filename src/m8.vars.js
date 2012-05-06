@@ -1,7 +1,7 @@
 	var ENV       = typeof module != 'undefined' && 'exports' in module && typeof require == 'function' ? 'commonjs' : typeof navigator != 'undefined' ? 'browser' : 'other',
 		OP        = Object.prototype, Module = ENV != 'commonjs' ? null : require( 'module' ), U,
 		force     = [false, NaN, null, true, U].reduce( function( o, v ) { o[String( v )] = v; return o; }, obj() ),
-		id_count  = 999, id_prefix = 'anon__',
+		htmcol    = 'htmlcollection', htmdoc = 'htmldocument', id_count  = 999, id_prefix = 'anon__',
 		modes     = function() {  // this is a Map of all the different combinations of permissions for assigning
 			var f = 'configurable enumerable writable'.split( ' ' ), // property descriptors using Object.defineProperty
 				m = { ce : 'ec', cw : 'wc', ew : 'we', cew : 'cwe ecw ewc wce wec'.split( ' ' ) },

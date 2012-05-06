@@ -22,9 +22,13 @@
 
 	x.cache( 'Array', function( Type ) {
 		def( Type, 'coerce', describe( function( a, i, j ) {
-			i = type( i ) == 'number' ? i > 0 ? i : 0 : 0;
-			j = type( j ) == 'number' ? j > i ? j : j <= 0 ? a.length + j : i + j : a.length;
-			return got( a, 'length' ) ? slice.call( a, i, j ) : [a];
+			if ( !got( a, 'length' ) ) return slice.call( arguments );
+			i = parseInt( i, 10 );
+			switch ( arguments.length ) {
+				case 2 : isNaN( i ) || i >= 0 ? ( j = a.length ) : ( j = a.length + i, i = 0 );                      break;
+				case 3 : j = isNaN( j = parseInt( j, 10 ) ) ? a.length : j > i ? j : j <= 0 ? a.length + j : i + j ; break;
+			}
+			return slice.call( a, i, j );
 		}, 'w' ) );
 		def( Type.prototype, 'find', describe( function( fn, ctx ) {
 			var i = -1, l = this.length >>> 0;
@@ -86,17 +90,17 @@
 			},
 			value  : function( o, k )  {
 				if ( isNaN( k ) && !!~k.indexOf( '.' ) ) {
-					var v; k = k.split( '.' );
-					while ( v = k.shift() )
-						if ( ( o = Type.value( o, v ) ) === U ) return o;
+					var v;  k = k.split( '.' );
+					while ( v = k.shift() ) if ( ( o = Type.value( o, v ) ) === U ) return o;
 					return o;
 				}
-				return empty( o ) ? U : !empty( o[k] )
-					 ? o[k] : nativeType( o.get ) == 'function'
-					 ? o.get( k ) : nativeType( o.getAttribute ) == 'function'
+				return empty( o )
+					 ? U                   : !empty( o[k] )
+					 ? o[k]                : typeof o.get          == 'function'
+					 ? o.get( k )          : typeof o.getAttribute == 'function'
 					 ? o.getAttribute( k ) : U;
 			},
-			values : function( o ) { return Type.keys( o ).map( function( k ) { return o[k]; } ); }
+			values : function( o ) { return Type.keys( Object( o ) ).map( function( k ) { return o[k]; } ); }
 		}, 'w' );
 	} );
 

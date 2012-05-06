@@ -19,13 +19,15 @@
 	}
 	function describe( v, m ) { return copy( ( nativeType( v ) == 'object' ? v : { value : v } ), ( nativeType( m ) == 'object' ? m : modes[m.toLowerCase()] || modes.cew ) ); }
 
-	function empty( o ) { return !exists( o ) || ( iter( o ) ? !len( o ) : false ); }
-	function exists( o ) { return ( o = type( o ) ) !== false && o != 'nan'; }
+	function empty( o ) { return !exists( o ) || ( !len( o ) && iter( o ) ) || false; }
+//	function exists( o ) { return ( o = type( o ) ) !== false && o != 'nan'; }
+	function exists( o ) { return !( o === null || o === U || ( typeof o == 'number' && isNaN( o ) ) ); }
 
 	function got( o, k ) { return k in Object( o ); }
 	function has( o, k ) { return OP.hasOwnProperty.call( o, k ); }
 
-	function len( o ) { return Object.keys( Object( o ) ).length; }
+	function iter( o ) { return got( o, 'length' ) || nativeType( o ) == 'object'; }
+	function len( o ) { return ( 'length' in ( o = Object( o ) ) ? o : Object.keys( o ) ).length; }
 
 	function m8( o ) { return o; }
 
@@ -35,12 +37,16 @@
 	function valof( o ) { return OP.valueOf.call( o ); }
 
 // type methods
-	function domType( t ) { return re_col.test( t ) ? 'htmlcollection' : re_el.test( t ) ? 'htmlelement' : false; }
+	function domType( t ) {
+//		return re_col.test( t ) ? 'htmlcollection' : re_el.test( t ) ? 'htmlelement' : false;
+		return t == htmdoc ? htmdoc : ( t == htmcol || t == 'nodelist' ) ? htmcol : ( !t.indexOf( 'htm' ) && ( t.lastIndexOf( 'element' ) + 7 === t.length ) ) ? 'htmlelement' : false;
+	}
 	function nativeType( o, t ) {
 		if ( ( t = tostr( o ) ) in types ) return types[t]; // check the cached types first
-		return ( types[t] = t.toLowerCase().match( re_type )[1].replace( re_vendor, '$1' ) );
+//		return ( types[t] = t.toLowerCase().match( re_type )[1].replace( re_vendor, '$1' ) );
+		return ( types[t] = t.split( ' ' )[1].split( ']' )[0].toLowerCase().replace( re_vendor, '$1' ) );
 	}
-	function type( o ) { return o === null || o === U ? false : got( o, '__type__' ) ? o.__type__ : Object.getPrototypeOf( o ) === null ? null + "object" : U; }
+	function type( o ) { return o === null || o === U ? false : got( o, '__type__' ) ? o.__type__ : Object.getPrototypeOf( o ) === null ? 'nullobject' : U; }
 
 // internals
 	function _id( prefix ) { return ( prefix || id_prefix ) + ( ++id_count ); }
@@ -49,7 +55,6 @@
 			 ? ctx ? ctx instanceof Module ? ctx.exports : ctx : module.exports
 			 : ctx || root;
 	}
-	function iter( o ) { return 'length' in Object( o ) || nativeType( o ) == 'object'; }
 
 // if ENV === commonjs we want root to be global
 	typeof global == 'undefined' || ( root = global );
@@ -80,6 +85,7 @@
 		copy    : copy,  def    : def,    defs  : defs, describe : describe,
 		empty   : empty, exists : exists, got   : got,  has      : has,
 		id      : function( o, prefix ) { return o ? got( o, 'id' ) ? o.id : ( o.id = _id( prefix ) ) : _id( prefix ); },
+		iter    : iter,
 		len     : len, nativeType : nativeType, noop  : function() {}, obj : obj,
 		range   : function ( i, j ) {
 			var a = [i];

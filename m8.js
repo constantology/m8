@@ -3,7 +3,7 @@
     var ENV = typeof module != "undefined" && "exports" in module && typeof require == "function" ? "commonjs" : typeof navigator != "undefined" ? "browser" : "other", OP = Object.prototype, Module = ENV != "commonjs" ? null : require("module"), U, force = [ false, NaN, null, true, U ].reduce(function(o, v) {
         o[String(v)] = v;
         return o;
-    }, obj()), id_count = 999, id_prefix = "anon__", modes = function() {
+    }, obj()), htmcol = "htmlcollection", htmdoc = "htmldocument", id_count = 999, id_prefix = "anon__", modes = function() {
         var f = "configurable enumerable writable".split(" "), m = {
             ce : "ec",
             cw : "wc",
@@ -65,10 +65,10 @@
         }, nativeType(m) == "object" ? m : modes[m.toLowerCase()] || modes.cew);
     }
     function empty(o) {
-        return !exists(o) || (iter(o) ? !len(o) : false);
+        return !exists(o) || !len(o) && iter(o) || false;
     }
     function exists(o) {
-        return (o = type(o)) !== false && o != "nan";
+        return !(o === null || o === U || typeof o == "number" && isNaN(o));
     }
     function got(o, k) {
         return k in Object(o);
@@ -76,8 +76,11 @@
     function has(o, k) {
         return OP.hasOwnProperty.call(o, k);
     }
+    function iter(o) {
+        return got(o, "length") || nativeType(o) == "object";
+    }
     function len(o) {
-        return Object.keys(Object(o)).length;
+        return ("length" in (o = Object(o)) ? o : Object.keys(o)).length;
     }
     function m8(o) {
         return o;
@@ -92,23 +95,20 @@
         return OP.valueOf.call(o);
     }
     function domType(t) {
-        return re_col.test(t) ? "htmlcollection" : re_el.test(t) ? "htmlelement" : false;
+        return t == htmdoc ? htmdoc : t == htmcol || t == "nodelist" ? htmcol : !t.indexOf("htm") && t.lastIndexOf("element") + 7 === t.length ? "htmlelement" : false;
     }
     function nativeType(o, t) {
         if ((t = tostr(o)) in types) return types[t];
-        return types[t] = t.toLowerCase().match(re_type)[1].replace(re_vendor, "$1");
+        return types[t] = t.split(" ")[1].split("]")[0].toLowerCase().replace(re_vendor, "$1");
     }
     function type(o) {
-        return o === null || o === U ? false : got(o, "__type__") ? o.__type__ : Object.getPrototypeOf(o) === null ? null + "object" : U;
+        return o === null || o === U ? false : got(o, "__type__") ? o.__type__ : Object.getPrototypeOf(o) === null ? "nullobject" : U;
     }
     function _id(prefix) {
         return (prefix || id_prefix) + ++id_count;
     }
     function blessCTX(ctx) {
         return ENV == "commonjs" ? ctx ? ctx instanceof Module ? ctx.exports : ctx : module.exports : ctx || root;
-    }
-    function iter(o) {
-        return "length" in Object(o) || nativeType(o) == "object";
     }
     typeof global == "undefined" || (root = global);
     defs(m8, {
@@ -155,6 +155,7 @@
         id : function(o, prefix) {
             return o ? got(o, "id") ? o.id : o.id = _id(prefix) : _id(prefix);
         },
+        iter : iter,
         len : len,
         nativeType : nativeType,
         noop : function() {},
@@ -190,9 +191,17 @@
     }
     x.cache("Array", function(Type) {
         def(Type, "coerce", describe(function(a, i, j) {
-            i = type(i) == "number" ? i > 0 ? i : 0 : 0;
-            j = type(j) == "number" ? j > i ? j : j <= 0 ? a.length + j : i + j : a.length;
-            return got(a, "length") ? slice.call(a, i, j) : [ a ];
+            if (!got(a, "length")) return slice.call(arguments);
+            i = parseInt(i, 10);
+            switch (arguments.length) {
+              case 2:
+                isNaN(i) || i >= 0 ? j = a.length : (j = a.length + i, i = 0);
+                break;
+              case 3:
+                j = isNaN(j = parseInt(j, 10)) ? a.length : j > i ? j : j <= 0 ? a.length + j : i + j;
+                break;
+            }
+            return slice.call(a, i, j);
         }, "w"));
         def(Type.prototype, "find", describe(function(fn, ctx) {
             var i = -1, l = this.length >>> 0;
@@ -263,10 +272,10 @@
                     while (v = k.shift()) if ((o = Type.value(o, v)) === U) return o;
                     return o;
                 }
-                return empty(o) ? U : !empty(o[k]) ? o[k] : nativeType(o.get) == "function" ? o.get(k) : nativeType(o.getAttribute) == "function" ? o.getAttribute(k) : U;
+                return empty(o) ? U : !empty(o[k]) ? o[k] : typeof o.get == "function" ? o.get(k) : typeof o.getAttribute == "function" ? o.getAttribute(k) : U;
             },
             values : function(o) {
-                return Type.keys(o).map(function(k) {
+                return Type.keys(Object(o)).map(function(k) {
                     return o[k];
                 });
             }
