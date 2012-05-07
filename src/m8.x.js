@@ -89,10 +89,13 @@
 				}, v );
 			},
 			value  : function( o, k )  {
-				if ( isNaN( k ) && !!~k.indexOf( '.' ) ) {
-					var v;  k = k.split( '.' );
-					while ( v = k.shift() ) if ( ( o = Type.value( o, v ) ) === U ) return o;
-					return o;
+				if ( isNaN( k ) ) {
+					if ( got( o, k ) ) return o[k];
+					if ( !!~k.indexOf( '.' ) ) {
+						var v;  k = k.split( '.' );
+						while ( v = k.shift() ) if ( ( o = Type.value( o, v ) ) === U ) return o;
+						return o;
+					}
 				}
 				return empty( o )
 					 ? U                   : !empty( o[k] )
