@@ -1,2 +1,2 @@
-;!function( root ) {
+;!function( root, Name ) {
 	"use strict";

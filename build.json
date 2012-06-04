@@ -5,6 +5,6 @@
 	"out"       : { "dir" : "./", "file" : "m8", "min" : "m8.min" },
 	"src" : {
 		"dir"   : "./src",
-		"files" : [".begin", "m8.vars", "m8", "m8.x", ".end"]
+		"files" : [".begin", "m8.vars", "m8.expose", "m8", "m8.x", ".end"]
 	}
 }

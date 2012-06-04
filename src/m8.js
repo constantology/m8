@@ -1,3 +1,5 @@
+	function __lib__( o ) { return o; }
+
 	function copy( d, s, n ) {
 		n = n === true; s || ( s = d, d = obj() );
 		for ( var k in s ) !has( s, k ) || ( n && has( d, k ) ) || ( d[k] = s[k] );
@@ -9,13 +11,13 @@
 		!( desc.get || desc.set ) || delete desc.writable; // <- ARGH!!! see: https://plus.google.com/117400647045355298632/posts/YTX1wMry8M2
 		if ( overwrite === true || !exists ) Object.defineProperty( item, name, desc );
 		else if ( debug === true && exists )
-			new Error( 'm8.def cannot overwrite existing property: ' + name + ', in item type: ' + type( item ) + '.' );
-		return m8;
+			new Error( Name + '.def cannot overwrite existing property: ' + name + ', in item type: ' + type( item ) + '.' );
+		return __lib__;
 	}
 	function defs( item, o, m, overwrite, debug ) {
 		m || ( m = 'cw' );
 		for ( var k in o ) !has( o, k ) || def( item, k, describe( o[k], m ), overwrite, debug );
-		return m8;
+		return __lib__;
 	}
 	function describe( v, m ) { return copy( ( nativeType( v ) == 'object' ? v : { value : v } ), ( nativeType( m ) == 'object' ? m : modes[m.toLowerCase()] || modes.cew ) ); }
 
@@ -23,13 +25,13 @@
 //	function exists( o ) { return ( o = type( o ) ) !== false && o != 'nan'; }
 	function exists( o ) { return !( o === null || o === U || ( typeof o == 'number' && isNaN( o ) ) ); }
 
+	function fname( fn ) { return fn.name || fn.displayName || ( String( fn ).match( re_name ) || ['', ''] )[1].trim(); }
+
 	function got( o, k ) { return k in Object( o ); }
 	function has( o, k ) { return OP.hasOwnProperty.call( o, k ); }
 
 	function iter( o ) { return got( o, 'length' ) || nativeType( o ) == 'object'; }
 	function len( o ) { return ( 'length' in ( o = Object( o ) ) ? o : Object.keys( o ) ).length; }
-
-	function m8( o ) { return o; }
 
 	function obj( o, n ) { return ( n = Object.create( null ) ) && arguments.length >= 1 ? copy( n, o ) : n; }
 
@@ -59,9 +61,9 @@
 // if ENV === commonjs we want root to be global
 	typeof global == 'undefined' || ( root = global );
 
-	defs( m8, {
+	defs( __lib__, {
 // properties
-		ENV    : ENV, global : { value : root }, modes : { value : modes }, __type__ : 'm8',
+		ENV    : ENV, global : { value : root }, modes : { value : modes }, __name__ : Name, __type__ : 'library',
 // methods
 		bless  : function( ns, ctx ) {
 			switch( nativeType( ns ) ) {
@@ -70,7 +72,7 @@
 				default       : return blessCTX( ctx );
 			}
 
-			if ( re_m8.test( ns[0] ) ) { ctx = m8; ns.shift(); }
+			if ( re_lib.test( ns[0] ) ) { ctx = __lib__; ns.shift(); }
 
 			if ( !ns.length ) return blessCTX( ctx );
 

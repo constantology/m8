@@ -1,6 +1,6 @@
-!function(root) {
+!function(root, Name) {
     "use strict";
-    var ENV = typeof module != "undefined" && "exports" in module && typeof require == "function" ? "commonjs" : typeof navigator != "undefined" ? "browser" : "other", OP = Object.prototype, Module = ENV != "commonjs" ? null : require("module"), U, force = [ false, NaN, null, true, U ].reduce(function(o, v) {
+    var ENV = typeof module != "undefined" && "exports" in module && typeof require == "function" ? "commonjs" : typeof navigator != "undefined" ? "browser" : "other", OP = Object.prototype, Module = ENV != "commonjs" ? null : require("module"), U, conflict, desc_lib, force = [ false, NaN, null, true, U ].reduce(function(o, v) {
         o[String(v)] = v;
         return o;
     }, obj()), htmcol = "htmlcollection", htmdoc = "htmldocument", id_count = 999, id_prefix = "anon__", modes = function() {
@@ -30,7 +30,7 @@
         }, obj());
         delete v.undefined;
         return v;
-    }(), re_col = /htmlcollection|nodelist/, re_el = /^html\w+?element$/, re_global = /global|window/i, re_m8 = /^\u005E?m8/, re_name = /[\s\(]*function([^\(]+).*/, re_type = /\[[^\s]+\s([^\]]+)\]/, re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/, slice = Array.prototype.slice, types = {
+    }(), re_col = /htmlcollection|nodelist/, re_el = /^html\w+?element$/, re_global = /global|window/i, re_lib = new RegExp("^\\u005E?" + Name), re_name = /[\s\(]*function([^\(]+).*/, re_type = /\[[^\s]+\s([^\]]+)\]/, re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/, slice = Array.prototype.slice, types = {
         "[object Object]" : "object"
     }, xcache = {
         Array : [],
@@ -42,6 +42,23 @@
         RegExp : [],
         String : []
     }, xid = "__xid__";
+    if (ENV != "commonjs") {
+        Name || (Name = "m8");
+        conflict = root[Name];
+        desc_lib = describe({
+            value : __lib__
+        }, "ew");
+        if (conflict) {
+            Object.getOwnPropertyNames(__lib__).forEach(function(k) {
+                this[k] = __lib__[k];
+            }, conflict);
+            def(conflict, Name, desc_lib);
+            __lib__ = conflict;
+        } else def(root, Name, desc_lib);
+    } else module.exports = __lib__;
+    function __lib__(o) {
+        return o;
+    }
     function copy(d, s, n) {
         n = n === true;
         s || (s = d, d = obj());
@@ -51,13 +68,13 @@
     function def(item, name, desc, overwrite, debug) {
         var exists = got(item, name);
         !(desc.get || desc.set) || delete desc.writable;
-        if (overwrite === true || !exists) Object.defineProperty(item, name, desc); else if (debug === true && exists) new Error("m8.def cannot overwrite existing property: " + name + ", in item type: " + type(item) + ".");
-        return m8;
+        if (overwrite === true || !exists) Object.defineProperty(item, name, desc); else if (debug === true && exists) new Error(Name + ".def cannot overwrite existing property: " + name + ", in item type: " + type(item) + ".");
+        return __lib__;
     }
     function defs(item, o, m, overwrite, debug) {
         m || (m = "cw");
         for (var k in o) !has(o, k) || def(item, k, describe(o[k], m), overwrite, debug);
-        return m8;
+        return __lib__;
     }
     function describe(v, m) {
         return copy(nativeType(v) == "object" ? v : {
@@ -70,6 +87,9 @@
     function exists(o) {
         return !(o === null || o === U || typeof o == "number" && isNaN(o));
     }
+    function fname(fn) {
+        return fn.name || fn.displayName || (String(fn).match(re_name) || [ "", "" ])[1].trim();
+    }
     function got(o, k) {
         return k in Object(o);
     }
@@ -81,9 +101,6 @@
     }
     function len(o) {
         return ("length" in (o = Object(o)) ? o : Object.keys(o)).length;
-    }
-    function m8(o) {
-        return o;
     }
     function obj(o, n) {
         return (n = Object.create(null)) && arguments.length >= 1 ? copy(n, o) : n;
@@ -111,7 +128,7 @@
         return ENV == "commonjs" ? ctx ? ctx instanceof Module ? ctx.exports : ctx : module.exports : ctx || root;
     }
     typeof global == "undefined" || (root = global);
-    defs(m8, {
+    defs(__lib__, {
         ENV : ENV,
         global : {
             value : root
@@ -119,7 +136,8 @@
         modes : {
             value : modes
         },
-        __type__ : "m8",
+        __name__ : Name,
+        __type__ : "library",
         bless : function(ns, ctx) {
             switch (nativeType(ns)) {
               case "array":
@@ -130,8 +148,8 @@
               default:
                 return blessCTX(ctx);
             }
-            if (re_m8.test(ns[0])) {
-                ctx = m8;
+            if (re_lib.test(ns[0])) {
+                ctx = __lib__;
                 ns.shift();
             }
             if (!ns.length) return blessCTX(ctx);
@@ -171,36 +189,30 @@
         x : x
     }, "w");
     function x() {
-        slice.call(arguments).forEach(_x);
-        return m8;
+        slice.call(arguments).forEach(x_update);
+        return __lib__;
     }
     def(x, "cache", describe(function(type, extender) {
+        typeof type == "string" || (type = type.__name__ || fname(type));
         xcache[type] || (xcache[type] = []);
         xcache[type].push(extender);
-        return m8;
+        return __lib__;
     }, "w"));
-    function _x(Type) {
-        got(Type, xid) || def(Type, xid, describe(0, "w"));
-        var o = xcache[Type.__name__ || Type.name];
-        if (!o) return;
-        o.slice(Type[xid]).forEach(x_, Type);
-        Type[xid] = o.length;
+    function x_extend(extender) {
+        extender(this, __lib__);
     }
-    function x_(extend) {
-        extend(this, m8);
+    function x_update(Type) {
+        got(Type, xid) || def(Type, xid, describe(0, "w"));
+        var o = xcache[Type.__name__ || fname(Type)];
+        if (!o) return;
+        o.slice(Type[xid]).forEach(x_extend, Type);
+        Type[xid] = o.length;
     }
     x.cache("Array", function(Type) {
         def(Type, "coerce", describe(function(a, i, j) {
-            if (!got(a, "length")) return slice.call(arguments);
-            i = parseInt(i, 10);
-            switch (arguments.length) {
-              case 2:
-                isNaN(i) || i >= 0 ? j = a.length : (j = a.length + i, i = 0);
-                break;
-              case 3:
-                j = isNaN(j = parseInt(j, 10)) ? a.length : j > i ? j : j <= 0 ? a.length + j : i + j;
-                break;
-            }
+            if (!got(a, "length")) return [ a ];
+            i = type(i) == "number" ? i > 0 ? i : 0 : 0;
+            j = type(j) == "number" ? j > i ? j : j <= 0 ? a.length + j : i + j : a.length;
             return slice.call(a, i, j);
         }, "w"));
         def(Type.prototype, "find", describe(function(fn, ctx) {
@@ -229,11 +241,11 @@
         defs(Type.prototype, {
             __name__ : {
                 get : function() {
-                    if (!this.__m8name__) {
-                        var fn = valof(this), m = fn !== this ? fn.__name__ !== "anonymous" ? fn.__name__ : null : null, n = m || this.name || this.displayName || (String(this).match(re_name) || [ "", "" ])[1].trim();
-                        def(this, "__m8name__", describe(m || n || "anonymous", "w"));
+                    if (!this.__xname__) {
+                        var fn = valof(this), m = fn !== this ? fn.__name__ !== "anonymous" ? fn.__name__ : null : null, n = m || fname(this);
+                        def(this, "__xname__", describe(m || n || "anonymous", "w"));
                     }
-                    return this.__m8name__;
+                    return this.__xname__;
                 }
             },
             mimic : function(fn, name) {
@@ -255,12 +267,12 @@
         def(Type.prototype, "__type__", copy({
             get : function() {
                 var o = this, ctor = o.constructor, nt = nativeType(o), t = domType(nt) || (re_global.test(nt) ? "global" : false);
-                return t || (nt == "object" && ctor.__type__ != "function" ? ctor.__name__.toLowerCase() || ctor.__type__ || nt : nt == "number" && isNaN(o) ? "nan" : nt);
+                return t || (nt == "object" && ctor && ctor.__type__ != "function" ? String(ctor.__name__).toLowerCase() || ctor.__type__ || nt : nt == "number" && isNaN(o) ? "nan" : nt);
             }
         }, modes.r));
         defs(Type, {
             reduce : function(o, fn, v) {
-                return Type.keys(o).reduce(function(r, k, i) {
+                return Type.keys(Type(o)).reduce(function(r, k, i) {
                     r = fn.call(o, r, o[k], k, o, i);
                     return r;
                 }, v);
@@ -285,7 +297,4 @@
         }, "w");
     });
     x(Object, Array, Boolean, Function);
-    ENV != "commonjs" ? def(root, "m8", describe({
-        value : m8
-    }, "r")) : module.exports = m8;
-}(this);
+}(this, "m8");

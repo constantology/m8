@@ -1,5 +1,6 @@
 	var ENV       = typeof module != 'undefined' && 'exports' in module && typeof require == 'function' ? 'commonjs' : typeof navigator != 'undefined' ? 'browser' : 'other',
 		OP        = Object.prototype, Module = ENV != 'commonjs' ? null : require( 'module' ), U,
+		conflict, desc_lib,
 		force     = [false, NaN, null, true, U].reduce( function( o, v ) { o[String( v )] = v; return o; }, obj() ),
 		htmcol    = 'htmlcollection', htmdoc = 'htmldocument', id_count  = 999, id_prefix = 'anon__',
 		modes     = function() {  // this is a Map of all the different combinations of permissions for assigning
@@ -20,7 +21,7 @@
 			return v;
 		}(),
 		re_col    = /htmlcollection|nodelist/,   re_el   = /^html\w+?element$/,
-		re_global = /global|window/i,            re_m8   = /^\u005E?m8/,
+		re_global = /global|window/i,            re_lib  = new RegExp( '^\\u005E?' + Name ),
 		re_name   = /[\s\(]*function([^\(]+).*/, re_type = /\[[^\s]+\s([^\]]+)\]/,
 		re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
 		slice     = Array.prototype.slice,       types   = { '[object Object]' : 'object' },
