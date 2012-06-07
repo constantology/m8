@@ -39,9 +39,7 @@
 		if ( !b ) {
 			switch ( type = nativeType( a ) ) {
 				case 'array' : case 'object' : 
-					b = a;
-					a = new ( b.constructor || Object );
-					break;
+					b = a; a = new ( b.constructor || Object ); break;
 				default      : return a;
 			} 
 		}
@@ -54,8 +52,6 @@
 				return b.reduce( merge_array, a );
 			default       : return b;
 		}
-		
-		return a;
 	}
 	function merge_array( a, v, i ) { 
 		a[i] = merge( v );

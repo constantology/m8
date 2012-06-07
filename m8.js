@@ -127,7 +127,6 @@
           default:
             return b;
         }
-        return a;
     }
     function merge_array(a, v, i) {
         a[i] = merge(v);

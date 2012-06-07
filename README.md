@@ -407,6 +407,9 @@ An internal counter that is automatically incremented is appended to the end of 
 
 ```
 
+### m8.iter( item:Mixed ):Boolean
+Returns `true` if the passed item can be iterated over.
+
 ### m8.len( item:Mixed ):Number
 Tries the returns the `length` property of the passed `item`.
 
@@ -424,6 +427,9 @@ Tries the returns the `length` property of the passed `item`.
    // returns => true
 
 ```
+
+### m8.merge( destination:Array|Object, source:Array|Object ):Boolean
+Performs a "deep copy" of all the properties in `source` to `target`, so that `target` does not reference any child Arrays and/ or Objects that belong to `source`.
 
 ### m8.nativeType( item:Mixed ):String
 Returns the native `type` of the passed item. For normalised types use `m8.type`.
