@@ -32,8 +32,44 @@
 
 	function iter( o ) { return got( o, 'length' ) || nativeType( o ) == 'object'; }
 	function len( o ) { return ( 'length' in ( o = Object( o ) ) ? o : Object.keys( o ) ).length; }
+	
+	function merge( a, b ) {
+		var type;
+		
+		if ( !b ) {
+			switch ( type = nativeType( a ) ) {
+				case 'array' : case 'object' : 
+					b = a;
+					a = new ( b.constructor || Object );
+					break;
+				default      : return a;
+			} 
+		}
+		else type = nativeType( b );
+		
+		switch ( type ) {
+			case 'object' : return Object.keys( b ).reduce( merge_object, { source : b, target : a } ).target;
+			case 'array'  : 
+				a.length = b.length; // remove any extra items on the merged Array
+				return b.reduce( merge_array, a );
+			default       : return b;
+		}
+		
+		return a;
+	}
+	function merge_array( a, v, i ) { 
+		a[i] = merge( v );
+		return a;
+	}
+	function merge_object( o, k ) {
+		o.target[k] = merge( o.source[k] );
+		return o;
+	}
 
-	function obj( o, n ) { return ( n = Object.create( null ) ) && arguments.length >= 1 ? copy( n, o ) : n; }
+	function obj( o ) {
+		var n = Object.create( null );
+		return o && nativeType( o ) == 'object' ? copy( n, o ) : n;
+	}
 
 	function tostr( o ) { return OP.toString.call( o ); }
 	function valof( o ) { return OP.valueOf.call( o ); }
@@ -84,11 +120,11 @@
 			return ctx;
 		},
 		coerce : function( o, n, s ) { return !isNaN( ( n = Number( o ) ) ) ? n : ( s = String( o ) ) in force ? force[s] : o; },
-		copy    : copy,  def    : def,    defs  : defs, describe : describe,
-		empty   : empty, exists : exists, got   : got,  has      : has,
+		copy    : copy,  def    : def,    defs  : defs,  describe   : describe,
+		empty   : empty, exists : exists, got   : got,   has        : has,
 		id      : function( o, prefix ) { return o ? got( o, 'id' ) ? o.id : ( o.id = _id( prefix ) ) : _id( prefix ); },
-		iter    : iter,
-		len     : len, nativeType : nativeType, noop  : function() {}, obj : obj,
+		iter    : iter,  len    : len,    merge : merge, nativeType : nativeType, 
+		noop    : function() {},          obj   : obj,
 		range   : function ( i, j ) {
 			var a = [i];
 			while ( ++i <= j ) a.push( i );

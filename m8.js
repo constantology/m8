@@ -102,8 +102,44 @@
     function len(o) {
         return ("length" in (o = Object(o)) ? o : Object.keys(o)).length;
     }
-    function obj(o, n) {
-        return (n = Object.create(null)) && arguments.length >= 1 ? copy(n, o) : n;
+    function merge(a, b) {
+        var type;
+        if (!b) {
+            switch (type = nativeType(a)) {
+              case "array":
+              case "object":
+                b = a;
+                a = new (b.constructor || Object);
+                break;
+              default:
+                return a;
+            }
+        } else type = nativeType(b);
+        switch (type) {
+          case "object":
+            return Object.keys(b).reduce(merge_object, {
+                source : b,
+                target : a
+            }).target;
+          case "array":
+            a.length = b.length;
+            return b.reduce(merge_array, a);
+          default:
+            return b;
+        }
+        return a;
+    }
+    function merge_array(a, v, i) {
+        a[i] = merge(v);
+        return a;
+    }
+    function merge_object(o, k) {
+        o.target[k] = merge(o.source[k]);
+        return o;
+    }
+    function obj(o) {
+        var n = Object.create(null);
+        return o && nativeType(o) == "object" ? copy(n, o) : n;
     }
     function tostr(o) {
         return OP.toString.call(o);
@@ -175,6 +211,7 @@
         },
         iter : iter,
         len : len,
+        merge : merge,
         nativeType : nativeType,
         noop : function() {},
         obj : obj,
@@ -242,7 +279,7 @@
             __name__ : {
                 get : function() {
                     if (!this.__xname__) {
-                        var fn = valof(this), m = fn !== this ? fn.__name__ !== "anonymous" ? fn.__name__ : null : null, n = m || fname(this);
+                        var fn = this.valueOf(), m = fn !== this ? fn.__name__ !== "anonymous" ? fn.__name__ : null : null, n = m || fname(this);
                         def(this, "__xname__", describe(m || n || "anonymous", "w"));
                     }
                     return this.__xname__;

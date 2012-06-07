@@ -49,7 +49,7 @@
 		defs( Type.prototype, {
 			__name__  : { get : function() { // accessor property
 				if ( !this.__xname__ ) {
-					var fn = valof( this ),
+					var fn = this.valueOf(),
 						m  = fn !== this ? fn.__name__ !== 'anonymous' ? fn.__name__ : null : null, // handles anonymous functions which are mimicking (see mimic below) named functions
 						n  = m || fname( this );
 					def( this, '__xname__', describe( ( m || n || 'anonymous' ), 'w' ) );
