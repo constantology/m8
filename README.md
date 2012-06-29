@@ -348,6 +348,58 @@ Returns `false` if the passed `value` is `undefined` , `NaN` or `null`, returns 
 
 ```
 
+### m8.expose( library:Object[, name:String, module:Module] ):library
+Generic method to standardise exposing your library package to either the global namespace or a commonjs module.
+
+Internally resolves any conflict between the `library` to be exposed and an existing Object with the same `name`.
+
+If the `library` already has a `__name__` property then the `name` parameter may be omitted.
+
+If the `library` is not going to be used as a commonjs module then the `module` parameter may be omitted.
+
+#### Example:
+
+```javascript
+
+   // browser based version
+   ;!function() {
+
+      var my_library = { /* you awesome library api here */ };
+
+      m8.expose( my_library, 'foo' );
+
+   }();
+
+   m8.type( foo )   // returns => "library"
+
+   foo.__name__     // returns => "foo"
+
+   m8.expose( m8, foo );
+
+   foo.m8 === m8    // returns => true
+
+   m8.expose( m8, 'bar', foo );
+
+   foo.bar === m8   // returns => true
+
+   foo.bar.__name__ // returns => "m8"
+
+```
+
+```javascript
+
+   // commonjs based version
+   var m8         = require( 'm8' ),
+       my_library = { /* you awesome library api here */ };
+
+   m8.expose( my_library, 'foo', module );
+
+   m8.type( foo );  // returns => 'library'
+
+   foo.__name__;    // returns => 'foo'
+
+```
+
 ### m8.got( object:Object, key:String ):Boolean
 Returns `true` if `object` contains `key` based on the `in` operator.
 
@@ -481,6 +533,34 @@ An empty Function that returns nothing.
 Creates an empty Object using `Object.create( null )`, the Object has no constructor and executing `Object.getPrototypeOf` on the empty Object instance will return `null` rather than `Object.prototype`.
 
 Optionally pass an Object whose properties you want copied to the empty Object instance.
+
+## m8.remove( item:Array, value_or_index1:Number|Mixed|Number[]|Mixed[][, value_or_index2:Number|Mixed, ..., value_or_indexN:Number|Mixed] ):item
+## m8.remove( item:Object, property1:String|String[][, property2:String, ..., propertyN:String] ):item
+Removes items from the passed Array or Object and returns the passed Array or Object.
+
+If removing items from an Array, you can either pass the index of the item you want to remove or the item itself.
+If removing items from an Object, you simply pass the key of the item you want to remove.
+
+#### Example:
+
+```javascript
+
+   var foo_arr = ['one', 'two', 'three'],
+       foo_obj = { one : 1, two : 2, three : 3 };
+
+   m8.remove( foo_arr, 'one', 'three' );   // returns => ['two']
+
+   m8.remove( foo_arr, ['one', 'three'] ); // same as above
+
+   m8.remove( foo_arr, 0, 2 );             // same as above
+
+   m8.remove( foo_arr, [0, 2] );           // same as above
+
+   m8.remove( foo_obj, 'one', 'three' );   // returns => { two : 2 }
+
+   m8.remove( foo_obj, ['one', 'three'] ); // same as above
+
+```
 
 ### m8.tostr( item:Mixed ):String
 Shortened version of `Object.prototype.toString.call`.
@@ -682,6 +762,23 @@ If a `name` param is passed, then it is used as the `displayName`, otherwise the
    ( function( a, b, c ) { ... } ).__name__;              // returns => "anonymous"
 
    function bar( a, b, c ) { ... }.mimic( foo ).__name__; // returns => "foo"
+
+```
+
+## Object.key( object:Object, value:Mixed ):String
+Returns the `object`'s property `key` for the passed `value` if `value` is a property of `object`. If not `null` is returned.
+
+**NOTE:** `value` is determined based on the `===` operator.
+
+#### Example:
+
+```javascript
+
+   var foo = { one : 1, two : 2, three : 3 };
+
+   Object.key( foo, 2 ); // returns => "two"
+
+   Object.key( foo, 4 ); // returns => null
 
 ```
 
