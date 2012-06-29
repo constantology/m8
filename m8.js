@@ -251,39 +251,6 @@
     function type(item) {
         return item === null || item === UNDEF ? false : got(item, __type__) ? item[__type__] : Object.getPrototypeOf(item) === null ? "nullobject" : UNDEF;
     }
-    defs(__lib__ = expose(__lib__, Name, ENV == "commonjs" ? module : root), {
-        ENV : ENV,
-        global : {
-            value : root
-        },
-        modes : {
-            value : modes
-        },
-        bless : bless,
-        coerce : coerce,
-        copy : copy,
-        def : def,
-        defs : defs,
-        describe : describe,
-        empty : empty,
-        exists : exists,
-        expose : expose,
-        got : got,
-        has : has,
-        id : id,
-        iter : iter,
-        len : len,
-        merge : merge,
-        nativeType : nativeType,
-        noop : function() {},
-        obj : obj,
-        range : range,
-        remove : remove,
-        tostr : tostr,
-        type : type,
-        valof : valof,
-        x : x
-    }, "w");
     function x() {
         slice.call(arguments).forEach(x_update);
         return __lib__;
@@ -418,5 +385,38 @@
             }
         }, "w");
     });
+    defs(__lib__ = expose(__lib__, Name, ENV == "commonjs" ? module : root), {
+        ENV : ENV,
+        global : {
+            value : root
+        },
+        modes : {
+            value : modes
+        },
+        bless : bless,
+        coerce : coerce,
+        copy : copy,
+        def : def,
+        defs : defs,
+        describe : describe,
+        empty : empty,
+        exists : exists,
+        expose : expose,
+        got : got,
+        has : has,
+        id : id,
+        iter : iter,
+        len : len,
+        merge : merge,
+        nativeType : nativeType,
+        noop : function() {},
+        obj : obj,
+        range : range,
+        remove : remove,
+        tostr : tostr,
+        type : type,
+        valof : valof,
+        x : x
+    }, "w");
     x(Object, Array, Boolean, Function);
 }(this, "m8");

@@ -110,5 +110,3 @@
 			values : function( item ) { return Type.keys( Object( item ) ).map( function( key ) { return item[key]; } ); }
 		}, 'w' );
 	} );
-
-	x( Object, Array, Boolean, Function );
