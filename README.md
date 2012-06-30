@@ -853,15 +853,6 @@ Attempts to resolve a normalised type for any type that inherits from JavaScript
 
 **NOTE:** All types are **always** in lowercase
 
-## File sizes
-
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-	<tbody>
-		<tr><td style="width : 80px ;">m8.js</td><td style="width : 48px ;">3.73kb</td><td>deflate</td>
-		<tr><td>m8.min.js</td><td>2.86kb</td><td>uglified + deflate</td>
-	</tbody>
-</table>
-
 ## License
 
 (The MIT License)
