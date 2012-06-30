@@ -71,8 +71,8 @@
 	}
 	function bless_ctx( ctx ) {
 		return ENV == 'commonjs'
-			 ? ctx ? ctx instanceof Module ? ctx.exports : ctx : module.exports
-			 : ctx || root;
+			? ( ctx ? is_mod( ctx ) ? ctx.exports : ctx : module.exports )
+			: ctx || root;
 	}
 
 	function coerce( item ) {
@@ -140,10 +140,8 @@
 			: def( mod, name, desc );               // however, all properties will be added to conflict, not lib and
 		}                                           // conflict will be returned instead of lib
 
-		if ( !lib[__name__] && lib[__type__] !== 'library' ) {            // make sure the exposed library has a type
-			mod = obj(); mod[__name__] = name; mod[__type__] = 'library'; // of "library" and its name attached to it.
-			defs( lib, mod, 'w' );                                        // only if it doesn't have already them.
-		}
+		mod = obj(); mod[__name__] = name; mod[__type__] = 'library'; // make sure the exposed library has a type
+		defs( lib, mod, 'w', true );                                  // of "library" and its name attached to it.
 
 		return lib; // return the exposed library, if it already exists this will allow us to re-assign our internal copy
 	}
