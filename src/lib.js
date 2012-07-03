@@ -97,8 +97,8 @@
 
 	function fname( fn ) { return fn.name || fn.displayName || ( String( fn ).match( re_name ) || ['', ''] )[1].trim(); }
 
-	function got( obj, key ) { return arguments > 2 ? hasSome( got, obj, Array.coerce( arguments, 1 ) ) : key in Object( obj ); }
-	function has( obj, key ) { return arguments > 2 ? hasSome( has, obj, Array.coerce( arguments, 1 ) ) : OP.hasOwnProperty.call( obj, key ); }
+	function got( obj, key ) { return arguments.length > 2 ? hasSome( got, obj, Array.coerce( arguments, 1 ) ) : key in Object( obj ); }
+	function has( obj, key ) { return arguments.length > 2 ? hasSome( has, obj, Array.coerce( arguments, 1 ) ) : OP.hasOwnProperty.call( obj, key ); }
 	function hasSome( test, obj, keys ) { return keys.some( function( key ) { return test( obj, key ); } ); }
 
 	function id( item, prefix ) { return item ? got( item, 'id' ) ? item.id : ( item.id = id_create( prefix ) ) : id_create( prefix ); }

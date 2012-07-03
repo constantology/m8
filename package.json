@@ -17,5 +17,5 @@
 		"type"        : "git",
 		"url"         : "git@github.com:constantology/m8.git"
 	},
-	"version"         : "0.1.5"
+	"version"         : "0.1.6"
 }
