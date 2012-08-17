@@ -1,5 +1,6 @@
+	iter( PACKAGE ) || ( PACKAGE = root );
 
-	defs( ( __lib__ = expose( __lib__, Name, ENV == 'commonjs' ? module : root ) ), {
+	defs( ( __lib__ = expose( __lib__, Name, ENV == 'commonjs' ? module : PACKAGE ) ), {
 	// properties
 		ENV    : ENV, global : { value : root }, modes : { value : modes },
 	// methods
