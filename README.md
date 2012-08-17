@@ -4,11 +4,6 @@ m8 (mate) is a small utility library – for modern JavaScript engines – you m
 
 m8 provides a set of basic functionality I tend to write over and over in each of my projects, so I just abstracted it out into its own library!
 
-## WARNING!!!
-While **m8** has been tested, the testing framework I've written and used is very much a work in progress.
-
-Also I'm currently between virtual machine software and operating system licenses, so I have only tested on mac osx lion and snow leopard: nodejs – >= v0.6.13 – as well as current – and beta/ nightly – versions of Chrome, Safari/ Webkit and FireFox.
-
 ## A note on the archticture
 The bulk of the `m8` API, lives under the `m8` namespace. There are a few extensions to JavaScript Natives.
 
