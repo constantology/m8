@@ -18,7 +18,7 @@
 		"url"         : "git@github.com:constantology/m8.git"
 	},
 	"scripts"         : {
-		"test"        : "mocha --globals mocha,expect.js,m8 --reporter spec --ui tdd --colors ./test/m8.test.js"
+		"test"        : "mocha -c --globals mocha,expect,m8 -R spec -u tdd ./test"
 	},
-	"version"         : "0.1.7"
+	"version"         : "0.1.8"
 }
