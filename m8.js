@@ -381,9 +381,9 @@
 		}, 'w' );
 	} );
 
-	iter( PACKAGE ) || ( PACKAGE = root );
+	iter( PACKAGE ) || ( PACKAGE = ENV == 'commonjs' ? module : root );
 
-	defs( ( __lib__ = expose( __lib__, Name, ENV == 'commonjs' ? module : PACKAGE ) ), {
+	defs( ( __lib__ = expose( __lib__, Name, PACKAGE ) ), {
 	// properties
 		ENV    : ENV, global : { value : root }, modes : { value : modes },
 	// methods
