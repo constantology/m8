@@ -163,6 +163,7 @@ suite( 'm8', function() {
 		expect( m8.id( expected ) ).to.equal( 'foo' );
 		expect( empty_obj.id ).to.be( undefined );
 		expect( m8.id( empty_obj ) ).to.equal( empty_obj.id );
+		expect( m8.id( {}, 'foo' ).split( '-' )[0] ).to.equal( 'foo' );
 
 		done();
 	} );

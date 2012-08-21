@@ -434,9 +434,9 @@ Returns the `id` property of the passed item – item can be an Object, HTMLElem
 
 If an `id` does not exist on the passed `item`, the item is assigned an auto-generated `id` and the value is returned.
 
-If a `prefix` is supplied then it is used as the prefix for the `id` – if not `anon__` is used as the `prefix`.
+If a `prefix` is supplied then it is used as the prefix for the `id` – if not `anon` is used as the `prefix`.
 
-An internal counter that is automatically incremented is appended to the end of the `prefix`.
+An internal counter that is automatically incremented is appended to the end of the `prefix` and is separated from the prefix by a hyphen.
 
 #### Example:
 
@@ -448,9 +448,9 @@ An internal counter that is automatically incremented is appended to the end of 
 
    m8.id( foo );         // returns => "foo"
 
-   m8.id( bar );         // returns => "anon__1000"
+   m8.id( bar );         // returns => "anon-1000"
 
-   m8.id( yum, 'yum-' ); // returns => "yum-1001"
+   m8.id( yum, 'yum' );  // returns => "yum-1001"
 
 ```
 

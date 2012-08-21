@@ -13,7 +13,7 @@
 // this way we know whether to assign the namespace been blessed to module.exports or not.
 		Module    = ENV != 'commonjs' ? null : require( 'module' ),
 		force     = [false, NaN, null, true, UNDEF].reduce( function( res, val ) { res[String( val )] = val; return res; }, obj() ),
-		htmcol    = 'htmlcollection', htmdoc = 'htmldocument', id_count  = 999, id_prefix = 'anon__',
+		htmcol    = 'htmlcollection', htmdoc = 'htmldocument', id_count  = 999, id_prefix = 'anon',
 // this is a Map of all the different combinations of permissions for assigning property descriptors using Object.defineProperty
 		modes     = function() {
 			var mode_combos = { ce : 'ec', cw : 'wc', ew : 'we', cew : 'cwe ecw ewc wce wec'.split( ' ' ) },
@@ -153,7 +153,7 @@
 	function hasSome( test, obj, keys ) { return keys.some( function( key ) { return test( obj, key ); } ); }
 
 	function id( item, prefix ) { return item ? got( item, 'id' ) ? item.id : ( item.id = id_create( prefix ) ) : id_create( prefix ); }
-	function id_create( prefix ) { return ( prefix || id_prefix ) + ( ++id_count ); }
+	function id_create( prefix ) { return ( prefix || id_prefix ) + '-' + ( ++id_count ); }
 
 	function is_mod( mod ) {
 		if ( Module === null ) return false;

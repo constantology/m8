@@ -102,7 +102,7 @@
 	function hasSome( test, obj, keys ) { return keys.some( function( key ) { return test( obj, key ); } ); }
 
 	function id( item, prefix ) { return item ? got( item, 'id' ) ? item.id : ( item.id = id_create( prefix ) ) : id_create( prefix ); }
-	function id_create( prefix ) { return ( prefix || id_prefix ) + ( ++id_count ); }
+	function id_create( prefix ) { return ( prefix || id_prefix ) + '-' + ( ++id_count ); }
 
 	function is_mod( mod ) {
 		if ( Module === null ) return false;
