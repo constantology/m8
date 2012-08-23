@@ -20,5 +20,5 @@
 	"scripts"         : {
 		"test"        : "mocha -c --globals mocha,expect,m8 -R spec -u tdd ./test"
 	},
-	"version"         : "0.2.0"
+	"version"         : "0.2.1"
 }
