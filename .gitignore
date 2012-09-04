@@ -6,4 +6,7 @@ npm-debug.log
 
 runner.js
 
-test.bak/
+msie/
+
+*.bak*
+*.local*
