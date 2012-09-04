@@ -68,6 +68,10 @@ We can then require `foo` from another module and pass it any Types we want to e
 
 ```
 
+## Support
+
+Tested to work with nodejs, FF4+, Safari 5+, Chrome 7+, IE9+. Should technically work in any browser that supports [ecma 5]( http://kangax.github.com/es5-compat-table/) without throwing any JavaScript errors.
+
 ## API
 
 ### m8( item:Mixed ):Mixed
