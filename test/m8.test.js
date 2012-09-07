@@ -312,7 +312,7 @@ suite( 'm8', function() {
 		
 		expect( function( one ){}.__name__ ).to.equal( 'anonymous' );
 		expect( function foo( one, two, three ){}.__name__ ).to.equal( 'foo' );
-		expect( m8.obj.__name__ ).to.equal( 'obj' );
+		expect( m8.coerce.__name__ ).to.equal( 'coerce' );
 		expect( m8.nativeType.__name__ ).to.equal( 'nativeType' );
 		expect( Test.__name__ ).to.equal( 'Test' );
 		expect( Test.prototype.get.__name__ ).to.equal( 'get' );

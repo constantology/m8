@@ -2,7 +2,7 @@
 
 	defs( ( __lib__ = expose( __lib__, Name, PACKAGE ) ), {
 	// properties
-		ENV    : ENV, global : { value : root }, modes : { value : modes },
+		ENV        : ENV,        global : { value : root },        modes  : { value : modes },
 	// methods
 		bless      : bless,      coerce : coerce, copy   : copy,   def    : def,    defs  : defs,
 		describe   : describe,   empty  : empty,  exists : exists, expose : expose, got   : got,

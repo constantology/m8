@@ -29,5 +29,5 @@
 	"scripts"         : {
 		"test"        : "mocha -c --ignore-leaks -R spec -u tdd ./test"
 	},
-	"version"         : "0.2.3"
+	"version"         : "0.2.4"
 }
