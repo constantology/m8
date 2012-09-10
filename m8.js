@@ -188,11 +188,11 @@
 		}
 	}
 	function merge_array( target, source, i ) {
-		target[i] = merge( source );
+		target[i] = nativeType( target[i] ) === nativeType( source ) ? merge( target[i], source ) : merge( source );
 		return target;
 	}
 	function merge_object( o, key ) {
-		o.target[key] = merge( o.source[key] );
+		o.target[key] = nativeType( o.target[key] ) === nativeType( o.source[key] ) ? merge( o.target[key], o.source[key] ) : merge( o.source[key] );
 		return o;
 	}
 
