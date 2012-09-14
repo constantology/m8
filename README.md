@@ -416,6 +416,15 @@ Any type passed to `m8.got` is cast as an Object before checking it contains a s
 
 ```
 
+### m8.guid():String
+Generates a guid/uuid, the code for this was adapted from [this gist](https://gist.github.com/2295777).
+
+```javascript
+
+	m8.guid(); // returns something like => "286cb768-df10-4466-aabf-f5cb4ba406a2"
+
+```
+
 ### m8.has( object:Object, key:String ):Boolean
 Shortened version of `Object.prototype.hasOwnProperty.call`.
 

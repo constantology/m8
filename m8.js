@@ -1,7 +1,7 @@
-
 ;!function( root, Name, PACKAGE ) {
 	"use strict";
 
+/*~  m8/src/vars.js  ~*/
 // if ENV === commonjs we want root to be global
 	typeof global == 'undefined' ? root : ( root = global );
 
@@ -41,14 +41,17 @@
 			delete modes[UNDEF];
 			return modes;
 		}(),
-		re_global = /global|window/i,            re_lib    = new RegExp( '^\\u005E?' + Name ),
+		randy     = Math.random,                 re_global = /global|window/i,
+		re_guid   = /[xy]/g,                     re_lib    = new RegExp( '^\\u005E?' + Name ),
 		re_name   = /[\s\(]*function([^\(]+).*/, re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
-		slice     = Array.prototype.slice,       types     = { '[object Object]' : 'object' },
+		slice     = Array.prototype.slice,       tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
+		types     = { '[object Object]' : 'object' },
 		xcache    = {
 			'Array'  : [], 'Boolean' : [], 'Date'   : [], 'Function' : [],
 			'Number' : [], 'Object'  : [], 'RegExp' : [], 'String'   : []
 		};
 
+/*~  m8/src/lib.js  ~*/
 	function __lib__( val ) { return val; }
 
 	function bless( ns, ctx ) {
@@ -134,11 +137,12 @@
 		if ( ENV == 'commonjs' && is_mod( mod ) ) mod.exports = lib;
 		else {
 			mod || ( mod = root );
-			var conflict = mod[name], desc = describe( { value : lib }, 'ew' );
-			( conflict && iter( conflict ) )        // make sure if lib is already defined it's not a primitive value!
-			? def( ( lib = conflict ), '__', desc ) // don't over-write what's there, just add lib to conflict as conflict.__
-			: def( mod, name, desc );               // however, all properties will be added to conflict, not lib and
-		}                                           // conflict will be returned instead of lib
+			var conflict = mod[name],
+				desc     = describe( { value : lib }, 'ew' ); // make sure if lib is already defined it's not a primitive value!
+			( conflict && iter( conflict ) )                  // don't over-write what's there, just add lib to conflict as conflict.__
+			? def( ( lib = conflict ), '__', desc )           // however, all properties will be added to conflict, not lib and
+			: def( mod, name, desc );                         // conflict will be returned instead of lib
+		}
 
 		mod = obj(); mod[__name__] = name; mod[__type__] = 'library'; // make sure the exposed library has a type
 		defs( lib, mod, 'w', true );                                  // of "library" and its name attached to it.
@@ -149,6 +153,14 @@
 	function fname( fn ) { return fn.name || fn.displayName || ( String( fn ).match( re_name ) || ['', ''] )[1].trim(); }
 
 	function got( obj, key ) { return arguments.length > 2 ? hasSome( got, obj, Array.coerce( arguments, 1 ) ) : key in Object( obj ); }
+
+	// credit for guid goes here: gist.github.com/2295777
+	function guid() { return tpl_guid.replace( re_guid, guid_replace ); }
+	function guid_replace( match ) {
+		var num = ( randy() * 16 ) | 0;
+		return ( match == 'x' ? num : ( num & 0x3 | 0x8 ) ).toString( 16 );
+	}
+
 	function has( obj, key ) { return arguments.length > 2 ? hasSome( has, obj, Array.coerce( arguments, 1 ) ) : OP.hasOwnProperty.call( obj, key ); }
 	function hasSome( test, obj, keys ) { return keys.some( function( key ) { return test( obj, key ); } ); }
 
@@ -196,6 +208,8 @@
 		return o;
 	}
 
+	function noop() {}
+
 	function obj( props ) {
 		var nobj = Object.create( null );
 		return typeof props == 'object' ? copy( nobj, props ) : nobj;
@@ -242,6 +256,7 @@
 			 : UNDEF;
 	}
 
+/*~  m8/src/lib.x.js  ~*/
 // Commonjs Modules 1.1.1: http://wiki.commonjs.org/wiki/Modules/1.1.1
 // notes section:          http://wiki.commonjs.org/wiki/Modules/ProposalForNativeExtension
 // specifies the possibility of sandboxing JavaScript Natives in Modules in future versions
@@ -268,6 +283,7 @@
 		Type[__xid__] = extenders.length;                           // assigned every time __lib__.x() is called, and
 	}                                                               // potentilly throwing overwrite errors.
 
+/*~  m8/src/nativex.js  ~*/
 	x.cache( 'Array', function( Type ) {
 		def( Type, 'coerce', function( a, i, j ) {
 			if ( !got( a, 'length' ) ) return [a];
@@ -381,17 +397,18 @@
 		}, 'w' );
 	} );
 
+/*~  m8/src/expose.js  ~*/
 	iter( PACKAGE ) || ( PACKAGE = ENV == 'commonjs' ? module : root );
 
 	defs( ( __lib__ = expose( __lib__, Name, PACKAGE ) ), {
 	// properties
-		ENV        : ENV,        global : { value : root },        modes  : { value : modes },
+		ENV      : ENV,      global     : { value : root },            modes  : { value : modes },
 	// methods
-		bless      : bless,      coerce : coerce, copy   : copy,   def    : def,    defs  : defs,
-		describe   : describe,   empty  : empty,  exists : exists, expose : expose, got   : got,
-		has        : has,        id     : id,     iter   : iter,   len    : len,    merge : merge,
-		nativeType : nativeType, noop   : function() {},           obj    : obj,    range : range,
-		remove     : remove,     tostr  : tostr,  type   : type,   valof  : valof,  x     : x
+		bless    : bless,    coerce     : coerce,     copy   : copy,   def    : def,    defs  : defs,
+		describe : describe, empty      : empty,      exists : exists, expose : expose, got   : got,
+		guid     : guid,     has        : has,        id     : id,     iter   : iter,   len   : len,
+		merge    : merge,    nativeType : nativeType, noop   : noop,   obj    : obj,    range : range,
+		remove   : remove,   tostr      : tostr,      type   : type,   valof  : valof,  x     : x
 	}, 'w' );
 
 	x( Object, Array, Boolean, Function );

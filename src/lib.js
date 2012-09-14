@@ -83,11 +83,12 @@
 		if ( ENV == 'commonjs' && is_mod( mod ) ) mod.exports = lib;
 		else {
 			mod || ( mod = root );
-			var conflict = mod[name], desc = describe( { value : lib }, 'ew' );
-			( conflict && iter( conflict ) )        // make sure if lib is already defined it's not a primitive value!
-			? def( ( lib = conflict ), '__', desc ) // don't over-write what's there, just add lib to conflict as conflict.__
-			: def( mod, name, desc );               // however, all properties will be added to conflict, not lib and
-		}                                           // conflict will be returned instead of lib
+			var conflict = mod[name],
+				desc     = describe( { value : lib }, 'ew' ); // make sure if lib is already defined it's not a primitive value!
+			( conflict && iter( conflict ) )                  // don't over-write what's there, just add lib to conflict as conflict.__
+			? def( ( lib = conflict ), '__', desc )           // however, all properties will be added to conflict, not lib and
+			: def( mod, name, desc );                         // conflict will be returned instead of lib
+		}
 
 		mod = obj(); mod[__name__] = name; mod[__type__] = 'library'; // make sure the exposed library has a type
 		defs( lib, mod, 'w', true );                                  // of "library" and its name attached to it.
@@ -98,6 +99,14 @@
 	function fname( fn ) { return fn.name || fn.displayName || ( String( fn ).match( re_name ) || ['', ''] )[1].trim(); }
 
 	function got( obj, key ) { return arguments.length > 2 ? hasSome( got, obj, Array.coerce( arguments, 1 ) ) : key in Object( obj ); }
+
+	// credit for guid goes here: gist.github.com/2295777
+	function guid() { return tpl_guid.replace( re_guid, guid_replace ); }
+	function guid_replace( match ) {
+		var num = ( randy() * 16 ) | 0;
+		return ( match == 'x' ? num : ( num & 0x3 | 0x8 ) ).toString( 16 );
+	}
+
 	function has( obj, key ) { return arguments.length > 2 ? hasSome( has, obj, Array.coerce( arguments, 1 ) ) : OP.hasOwnProperty.call( obj, key ); }
 	function hasSome( test, obj, keys ) { return keys.some( function( key ) { return test( obj, key ); } ); }
 
@@ -144,6 +153,8 @@
 		o.target[key] = nativeType( o.target[key] ) === nativeType( o.source[key] ) ? merge( o.target[key], o.source[key] ) : merge( o.source[key] );
 		return o;
 	}
+
+	function noop() {}
 
 	function obj( props ) {
 		var nobj = Object.create( null );

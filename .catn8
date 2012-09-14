@@ -1,0 +1,10 @@
+{
+	"source"    : {
+		"dir"   : "./src",
+		"files" : ["vars", "lib", "lib.x", "nativex", "expose"]
+	},
+	"target"    : {
+		"dir"   : "{pwd}"
+	},
+	"type"      : "application/javascript"
+}

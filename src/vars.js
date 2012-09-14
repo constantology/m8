@@ -37,9 +37,11 @@
 			delete modes[UNDEF];
 			return modes;
 		}(),
-		re_global = /global|window/i,            re_lib    = new RegExp( '^\\u005E?' + Name ),
+		randy     = Math.random,                 re_global = /global|window/i,
+		re_guid   = /[xy]/g,                     re_lib    = new RegExp( '^\\u005E?' + Name ),
 		re_name   = /[\s\(]*function([^\(]+).*/, re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
-		slice     = Array.prototype.slice,       types     = { '[object Object]' : 'object' },
+		slice     = Array.prototype.slice,       tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
+		types     = { '[object Object]' : 'object' },
 		xcache    = {
 			'Array'  : [], 'Boolean' : [], 'Date'   : [], 'Function' : [],
 			'Number' : [], 'Object'  : [], 'RegExp' : [], 'String'   : []
