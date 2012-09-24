@@ -1,4 +1,4 @@
-typeof m8   !== 'undefined' || ( m8   = require( 'm8' ) );
+typeof m8   !== 'undefined' || ( m8   = require( '../m8' ) );
 typeof chai !== 'undefined' || ( chai = require( 'chai' ) );
 
 expect = chai.expect;

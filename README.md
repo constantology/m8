@@ -1,4 +1,4 @@
-# m8.js
+# m8.js [![build status](https://secure.travis-ci.org/constantology/m8.png)](http://travis-ci.org/constantology/m8)
 
 m8 (mate) is a small utility library – for modern JavaScript engines – you might find useful or just plain annoying.
 
