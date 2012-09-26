@@ -8,7 +8,8 @@
 		describe : describe, empty      : empty,      exists : exists, expose : expose, got   : got,
 		guid     : guid,     has        : has,        id     : id,     iter   : iter,   len   : len,
 		merge    : merge,    nativeType : nativeType, noop   : noop,   obj    : obj,    range : range,
-		remove   : remove,   tostr      : tostr,      type   : type,   valof  : valof,  x     : x
+		remove   : remove,   tostr      : tostr,      type   : type,   update : update, valof : valof,
+		x        : x
 	}, 'w' );
 
 	x( Object, Array, Boolean, Function );

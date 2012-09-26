@@ -201,3 +201,31 @@
 			 ? 'nullobject'
 			 : UNDEF;
 	}
+
+	function update( target, source ) {
+		if ( !source ) return merge( target );
+
+		switch ( nativeType( source ) ) {
+			case 'object' : return Object.keys( source ).reduce( update_object, { source : source, target : target } ).target;
+			case 'array'  : return source.reduce( update_array, target );
+			default       : return target;
+		}
+	}
+
+	function update_array( target, source, i ) {
+		target[i] = !got( target, i )
+				  ?  merge( source )
+				  :  nativeType( target[i] ) == nativeType( source )
+				  ?  update( target[i], source )
+				  :  target[i];
+		return target;
+	}
+
+	function update_object( o, key ) {
+		o.target[key] = !got( o.target, key )
+					  ?  merge( o.source[key] )
+					  :  nativeType( o.target[key] ) == nativeType( o.source[key] )
+					  ?  update( o.target[key], o.source[key] )
+					  :  o.target[key];
+		return o;
+	}

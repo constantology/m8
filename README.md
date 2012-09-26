@@ -172,8 +172,8 @@ Attempts to coerce primitive values "trapped" in Strings, into their real types.
 
 ```
 
-### m8.copy( destination:Object, source:Object[, no_overwrite:Boolean] ):Object
-Copies the properties – accessible via `Object.keys` – from the `source` Object to the `destination` Object and returns the `destination` Object.
+### m8.copy( target:Object, source:Object[, no_overwrite:Boolean] ):Object
+Copies the properties – accessible via `Object.keys` – from the `source` Object to the `target` Object and returns the `target` Object.
 
 #### Example:
 
@@ -488,7 +488,7 @@ Tries the returns the `length` property of the passed `item`.
 
 ```
 
-### m8.merge( destination:Array|Object, source:Array|Object ):Boolean
+### m8.merge( target:Array|Object, source:Array|Object ):Boolean
 Performs a "deep copy" of all the properties in `source` to `target`, so that `target` does not reference any child Arrays and/ or Objects that belong to `source`.
 
 ### m8.nativeType( item:Mixed ):String
@@ -617,6 +617,11 @@ Returns the normalised `type` of the passed item.
    m8.type( window );                                 // returns => "global"
 
 ```
+
+### m8.update( target:Array|Object, source:Array|Object ):Boolean
+Performs a "deep copy" of all the properties in `source` **that are not already contained in** `target`, so that `target` does not reference any child Arrays and/ or Objects that belong to `source`.
+
+This works similarly to `m8.merge` except that existing properties are not overwritten.
 
 ## static properties
 

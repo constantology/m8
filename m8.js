@@ -256,6 +256,34 @@
 			 : UNDEF;
 	}
 
+	function update( target, source ) {
+		if ( !source ) return merge( target );
+
+		switch ( nativeType( source ) ) {
+			case 'object' : return Object.keys( source ).reduce( update_object, { source : source, target : target } ).target;
+			case 'array'  : return source.reduce( update_array, target );
+			default       : return target;
+		}
+	}
+
+	function update_array( target, source, i ) {
+		target[i] = !got( target, i )
+				  ?  merge( source )
+				  :  nativeType( target[i] ) == nativeType( source )
+				  ?  update( target[i], source )
+				  :  target[i];
+		return target;
+	}
+
+	function update_object( o, key ) {
+		o.target[key] = !got( o.target, key )
+					  ?  merge( o.source[key] )
+					  :  nativeType( o.target[key] ) == nativeType( o.source[key] )
+					  ?  update( o.target[key], o.source[key] )
+					  :  o.target[key];
+		return o;
+	}
+
 /*~  m8/src/lib.x.js  ~*/
 // Commonjs Modules 1.1.1: http://wiki.commonjs.org/wiki/Modules/1.1.1
 // notes section:          http://wiki.commonjs.org/wiki/Modules/ProposalForNativeExtension
@@ -408,7 +436,8 @@
 		describe : describe, empty      : empty,      exists : exists, expose : expose, got   : got,
 		guid     : guid,     has        : has,        id     : id,     iter   : iter,   len   : len,
 		merge    : merge,    nativeType : nativeType, noop   : noop,   obj    : obj,    range : range,
-		remove   : remove,   tostr      : tostr,      type   : type,   valof  : valof,  x     : x
+		remove   : remove,   tostr      : tostr,      type   : type,   update : update, valof : valof,
+		x        : x
 	}, 'w' );
 
 	x( Object, Array, Boolean, Function );

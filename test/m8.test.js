@@ -190,13 +190,19 @@ suite( 'm8', function() {
 	} );
 
 	test( '<static> m8.merge', function( done ) {
-		var expected = { foo : 'bar', items : [{ value : 1 }, { items : [{ value : 1 }, { items : [{ value : 1 }, { value : 2 }, { value : 3 }], value : 2 }, { value : 3 }], value : 2 }, { value : 3 }]},
-			returned = m8.merge( m8.obj(), expected );
+		var expected = { foo : 'bar', items : [ { value : 1 }, { items : [ { value : 1 }, { items : [ { value : 1 }, { value : 2 }, { value : 3 } ], value : 2 }, { value : 3 } ], value : 2 }, { value : 3 } ] },
+			returned = m8.merge( m8.obj(), expected ),
+			overwritten = m8.merge( { items : [ { value : '1 2 3' }, { items : m8.range( 1, 100 ) } ] }, expected );
 
-		expect( returned ).not.to.equal( expected );
+		expect( returned ).to.not.equal( expected );
 		expect( returned ).to.eql( expected );
-		expect( returned.items ).not.to.equal( expected.items );
-		expect( returned.items[1].items[1] ).not.to.equal( expected.items[1].items[1] );
+		expect( returned.items ).to.not.equal( expected.items );
+		expect( returned.items[1].items[1] ).to.not.equal( expected.items[1].items[1] );
+
+		expect( overwritten.items[0].value ).to.equal( 1 );
+		expect( overwritten.items[1].items.length ).to.equal( 3 );
+		expect( overwritten.items[1].items ).to.not.equal( expected.items[1].items );
+		expect( overwritten.items[2].value ).to.equal( 3 );
 
 		done();
 	} );
@@ -225,8 +231,8 @@ suite( 'm8', function() {
 		expect( m8.type( returned ) ).to.eql( 'nullobject' );
 		expect( Object.getPrototypeOf( returned ) ).to.equal( null );
 		expect( m8.nativeType( returned ) ).to.equal( 'object' );
-		expect( m8.nativeType( returned ) ).not.to.equal( 'nullobject' );
-		expect( m8.type( returned ) ).not.to.equal( 'object' );
+		expect( m8.nativeType( returned ) ).to.not.equal( 'nullobject' );
+		expect( m8.type( returned ) ).to.not.equal( 'object' );
 
 		done();
 	} );
@@ -269,6 +275,31 @@ suite( 'm8', function() {
 		expect( m8.type( Object.create( null ) ) ).to.equal( 'nullobject' );
 		expect( m8.type( /.*/ ) ).to.equal( 'regexp' );
 		expect( m8.type( '' ) ).to.equal( 'string' );
+
+		done();
+	} );
+
+	test( '<static> m8.update', function( done ) {
+		var expected = { foo : 'bar', items : [ { id : 1, value : 1 }, { items : [ { value : 1 }, { items : [ { value : 1 }, { value : 2 }, { value : 3 } ], value : 2 }, { value : 3 } ], value : 2 }, { value : 3 } ] },
+			returned = m8.update( m8.obj(), expected ),
+			overwritten = m8.update( { foo : 'foo', items : [ { value : '1 2 3' }, { items : [ { id : 0 }, { items : [ { id : 2 } ] }].concat( m8.range( 0, 3 ) ) } ] }, expected );
+
+		expect( returned ).to.not.equal( expected );
+		expect( returned ).to.eql( expected );
+		expect( returned.items ).to.not.equal( expected.items );
+		expect( returned.items[1].items[1] ).to.not.equal( expected.items[1].items[1] );
+
+		expect( overwritten.foo ).to.equal( 'foo' );
+		expect( overwritten.items[1].items.length ).to.equal( 6 );
+		expect( overwritten.items[0].id ).to.equal( 1 );
+		expect( overwritten.items[0].value ).to.equal( '1 2 3' );
+		expect( overwritten.items[0] ).to.not.equal( expected.items[0] );
+		expect( overwritten.items[1].items[0].id ).to.equal( 0 );
+		expect( overwritten.items[1].items[0].value ).to.equal( 1 );
+		expect( overwritten.items[1].items[1].items.length ).to.equal( 3 );
+		expect( overwritten.items[1].items[1].items[0].id ).to.equal( 2 );
+		expect( overwritten.items[1].items[1].items[0].value ).to.equal( 1 );
+		expect( overwritten.items[1].items[1].items.length ).to.not.equal( expected.items[1].items[1].items );
 
 		done();
 	} );
@@ -327,8 +358,8 @@ suite( 'm8', function() {
 		function two() {}
 		two.mimic( one );
 		
-		expect( one ).not.to.equal(  two );
-		expect( one ).not.to.equal( two );
+		expect( one ).to.not.equal(  two );
+		expect( one ).to.not.equal( two );
 		expect( one.valueOf()  ).to.equal( two.valueOf()  );
 		expect( one.toString() ).to.equal( two.toString() );
 
