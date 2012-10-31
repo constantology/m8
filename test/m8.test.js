@@ -141,6 +141,12 @@ suite( 'm8', function() {
 		expect( m8.got( new Test(), 'foo', 'baz' ) ).to.equal( true );
 		expect( m8.got( new Test(), 'baz', 'bam' ) ).to.equal( true );
 		expect( m8.got( new Test( 'val' ), 'foo', 'bam', 'val' ) ).to.equal( true );
+		expect( m8.got( { foo : { bar : 'baz' } }, 'foo.bar' ) ).to.equal( true );
+		expect( m8.got( { foo : { bar : 'baz' } }, 'foo.baz' ) ).to.equal( false );
+		expect( m8.got( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'items.0.foo.bar' ) ).to.equal( true );
+		expect( m8.got( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'zoo', 'goo.bar', 'items.0.foo.bar' ) ).to.equal( true );
+		expect( m8.got( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'items.1.foo.bar' ) ).to.equal( false );
+		expect( m8.got( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'zoo', 'goo.bar', 'items.1.foo.bar' ) ).to.equal( false );
 
 		done();
 	} );
@@ -155,6 +161,12 @@ suite( 'm8', function() {
 		expect( m8.has( new Test(), 'foo', 'baz' ) ).to.equal( false );
 		expect( m8.has( new Test(), 'bar', 'bam' ) ).to.equal( false );
 		expect( m8.has( new Test( 'value' ), 'foo', 'bam', 'value' ) ).to.equal( true );
+		expect( m8.has( { foo : { bar : 'baz' } }, 'foo.bar' ) ).to.equal( true );
+		expect( m8.has( { foo : { bar : 'baz' } }, 'foo.baz' ) ).to.equal( false );
+		expect( m8.has( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'items.0.foo.bar' ) ).to.equal( true );
+		expect( m8.has( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'zoo', 'goo.bar', 'items.0.foo.bar' ) ).to.equal( true );
+		expect( m8.has( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'items.1.foo.bar' ) ).to.equal( false );
+		expect( m8.has( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'zoo', 'goo.bar', 'items.1.foo.bar' ) ).to.equal( false );
 
 		done();
 	} );

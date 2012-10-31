@@ -1,7 +1,7 @@
 ;!function( root, Name, PACKAGE ) {
 	"use strict";
 
-/*~  m8/src/vars.js  ~*/
+/*~  src/vars.js  ~*/
 // if ENV === commonjs we want root to be global
 	typeof global == 'undefined' ? root : ( root = global );
 
@@ -51,7 +51,7 @@
 			'Number' : [], 'Object'  : [], 'RegExp' : [], 'String'   : []
 		};
 
-/*~  m8/src/lib.js  ~*/
+/*~  src/lib.js  ~*/
 	function __lib__( val ) { return val; }
 
 	function bless( ns, ctx ) {
@@ -152,7 +152,9 @@
 
 	function fname( fn ) { return fn.name || fn.displayName || ( String( fn ).match( re_name ) || ['', ''] )[1].trim(); }
 
-	function got( obj, key ) { return arguments.length > 2 ? hasSome( got, obj, Array.coerce( arguments, 1 ) ) : key in Object( obj ); }
+	function got( item, property ) {
+		return String( property ) in Object( item );
+	}
 
 	// credit for guid goes here: gist.github.com/2295777
 	function guid() { return tpl_guid.replace( re_guid, guid_replace ); }
@@ -161,8 +163,9 @@
 		return ( match == 'x' ? num : ( num & 0x3 | 0x8 ) ).toString( 16 );
 	}
 
-	function has( obj, key ) { return arguments.length > 2 ? hasSome( has, obj, Array.coerce( arguments, 1 ) ) : OP.hasOwnProperty.call( obj, key ); }
-	function hasSome( test, obj, keys ) { return keys.some( function( key ) { return test( obj, key ); } ); }
+	function has( item, property ) {
+		return OP.hasOwnProperty.call( Object( item ), String( property ) );
+	}
 
 	function id( item, prefix ) { return item ? got( item, 'id' ) && !empty( item.id ) ? item.id : ( item.id = id_create( prefix ) ) : id_create( prefix ); }
 	function id_create( prefix ) { return ( prefix || id_prefix ) + '-' + ( ++id_count ); }
@@ -213,6 +216,35 @@
 	function obj( props ) {
 		var nobj = Object.create( null );
 		return typeof props == 'object' ? copy( nobj, props ) : nobj;
+	}
+
+	function property_exists( test, item, property ) {
+		var key; property = String( property );
+
+		if ( arguments.length > 3 ) {
+			property = slice.call( arguments, 2 );
+
+			while ( key = property.shift() )
+				if ( property_exists( test, item, key ) )
+					return true;
+
+			return false;
+		}
+
+		if ( !!~property.indexOf( '.' ) ) {
+			property = property.split( '.' );
+
+			while ( key = property.shift() ) {
+				if ( !property_exists( test, item, key ) )
+					return false;
+
+				item = item[key];
+			}
+
+			return true;
+		}
+
+		return test( item, property );
 	}
 
 	function range( i, j ) {
@@ -284,7 +316,7 @@
 		return o;
 	}
 
-/*~  m8/src/lib.x.js  ~*/
+/*~  src/lib.x.js  ~*/
 // Commonjs Modules 1.1.1: http://wiki.commonjs.org/wiki/Modules/1.1.1
 // notes section:          http://wiki.commonjs.org/wiki/Modules/ProposalForNativeExtension
 // specifies the possibility of sandboxing JavaScript Natives in Modules in future versions
@@ -311,7 +343,7 @@
 		Type[__xid__] = extenders.length;                           // assigned every time __lib__.x() is called, and
 	}                                                               // potentilly throwing overwrite errors.
 
-/*~  m8/src/nativex.js  ~*/
+/*~  src/nativex.js  ~*/
 	x.cache( 'Array', function( Type ) {
 		def( Type, 'coerce', function( a, i, j ) {
 			if ( !got( a, 'length' ) ) return [a];
@@ -425,19 +457,19 @@
 		}, 'w' );
 	} );
 
-/*~  m8/src/expose.js  ~*/
+/*~  src/expose.js  ~*/
 	iter( PACKAGE ) || ( PACKAGE = ENV == 'commonjs' ? module : root );
 
 	defs( ( __lib__ = expose( __lib__, Name, PACKAGE ) ), {
 	// properties
-		ENV      : ENV,      global     : { value : root },            modes  : { value : modes },
+		ENV      : ENV,      global : { value : root },            modes  : { value : modes },
 	// methods
-		bless    : bless,    coerce     : coerce,     copy   : copy,   def    : def,    defs  : defs,
-		describe : describe, empty      : empty,      exists : exists, expose : expose, got   : got,
-		guid     : guid,     has        : has,        id     : id,     iter   : iter,   len   : len,
-		merge    : merge,    nativeType : nativeType, noop   : noop,   obj    : obj,    range : range,
-		remove   : remove,   tostr      : tostr,      type   : type,   update : update, valof : valof,
-		x        : x
+		bless    : bless,    coerce : coerce,         copy   : copy,   def    : def,    defs       : defs,
+		describe : describe, empty  : empty,          exists : exists, expose : expose,
+		got      : property_exists.bind( null, got ), guid   : guid,   has    : property_exists.bind( null, has ),
+		id       : id,       iter   : iter,           len    : len,    merge  : merge,  nativeType : nativeType,
+		noop     : noop,     obj    : obj,            range  : range,  remove : remove, tostr      : tostr,
+		type     : type,     update : update,         valof  : valof,  x      : x
 	}, 'w' );
 
 	x( Object, Array, Boolean, Function );
