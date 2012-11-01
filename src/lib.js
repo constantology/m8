@@ -177,7 +177,10 @@
 			return false;
 		}
 
-		if ( !!~property.indexOf( '.' ) ) {
+		if ( test( item, property ) )
+			return true;
+			
+		if ( typeof item != 'string' && !!~property.indexOf( '.' ) ) {
 			property = property.split( '.' );
 
 			while ( key = property.shift() ) {
@@ -190,7 +193,7 @@
 			return true;
 		}
 
-		return test( item, property );
+		return false;
 	}
 
 	function range( i, j ) {
