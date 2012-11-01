@@ -866,6 +866,11 @@ Attempts to resolve a normalised type for any type that inherits from JavaScript
 
 **NOTE:** All types are **always** in lowercase
 
+## File size
+
+- m8.js ≅ 5.9kb (gzipped)
+- m8.min.js ≅ 3.2kb (minzipped)
+
 ## License
 
 (The MIT License)
