@@ -221,17 +221,17 @@ suite( 'm8', function() {
 
 	test( '<static> m8.nativeType', function( done ) {
 		expect( m8.nativeType( null ) ).to.equal( 'null' );
-		expect( m8.nativeType( undefined ) ).to.equal( 'undefined' );
+		expect( m8.ntype( undefined ) ).to.equal( 'undefined' );
 		expect( m8.nativeType( [] ) ).to.equal( 'array' );
-		expect( m8.nativeType( true ) ).to.equal( 'boolean' );
+		expect( m8.ntype( true ) ).to.equal( 'boolean' );
 		expect( m8.nativeType( new Date() ) ).to.equal( 'date' );
-		expect( m8.nativeType( function() {} ) ).to.equal( 'function' );
+		expect( m8.ntype( function() {} ) ).to.equal( 'function' );
 		expect( m8.nativeType( 0 ) ).to.equal( 'number' );
-		expect( m8.nativeType( NaN ) ).to.equal( 'number' );
+		expect( m8.ntype( NaN ) ).to.equal( 'number' );
 		expect( m8.nativeType( {} ) ).to.equal( 'object' );
-		expect( m8.nativeType( Object.create( null ) ) ).to.equal( 'object' );
+		expect( m8.ntype( Object.create( null ) ) ).to.equal( 'object' );
 		expect( m8.nativeType( /.*/ ) ).to.equal( 'regexp' );
-		expect( m8.nativeType( '' ) ).to.equal( 'string' );
+		expect( m8.ntype( '' ) ).to.equal( 'string' );
 
 		done();
 	} );

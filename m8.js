@@ -98,7 +98,7 @@
 			case 'object'  : mode = args.shift();        break;
 			default        :
 				 ntype = nativeType( desc );
-				 mode  = ntype != 'object' && defined ? Object.getOwnPropertyDescriptor( item, name ) : null;
+				 mode  = ntype != 'object' && defined ? description( item, name ) : null;
 				!mode || ( mode = ntype == 'function' ? modes.cw : modes.cew );
 		}
 		overwrite = args.shift() === true;
@@ -124,6 +124,9 @@
 	}
 	function describe( desc, mode ) {
 		return copy( ( nativeType( desc ) == 'object' ? desc : { value : desc } ), ( nativeType( mode ) == 'object' ? mode : modes[String( mode ).toLowerCase()] || modes.cew ), true );
+	}
+	function description( item, property ) {
+		return Object.getOwnPropertyDescriptor( item, property );
 	}
 
 	function empty( item ) { return !exists( item ) || ( !len( item ) && iter( item ) ) || false; }
@@ -233,7 +236,7 @@
 
 		if ( test( item, property ) )
 			return true;
-			
+
 		if ( typeof item != 'string' && !!~property.indexOf( '.' ) ) {
 			property = property.split( '.' );
 
@@ -465,14 +468,14 @@
 
 	defs( ( __lib__ = expose( __lib__, Name, PACKAGE ) ), {
 	// properties
-		ENV      : ENV,      global : { value : root },            modes  : { value : modes },
+		ENV      : ENV,      global      : { value : root },             modes  : { value : modes },
 	// methods
-		bless    : bless,    coerce : coerce,         copy   : copy,   def    : def,    defs       : defs,
-		describe : describe, empty  : empty,          exists : exists, expose : expose,
-		got      : property_exists.bind( null, got ), guid   : guid,   has    : property_exists.bind( null, has ),
-		id       : id,       iter   : iter,           len    : len,    merge  : merge,  nativeType : nativeType,
-		noop     : noop,     obj    : obj,            range  : range,  remove : remove, tostr      : tostr,
-		type     : type,     update : update,         valof  : valof,  x      : x
+		bless    : bless,    coerce      : coerce,      copy   : copy,   def    : def,    defs       : defs,
+		describe : describe, description : description, empty  : empty,  exists : exists, expose     : expose,
+		got      : property_exists.bind( null, got ),   guid   : guid,   has    : property_exists.bind( null, has ),
+		id       : id,       iter        : iter,        len    : len,    merge  : merge,  nativeType : nativeType,
+		noop     : noop,     ntype       : nativeType,  obj    : obj,    range  : range,  remove     : remove,
+		tostr    : tostr,    type        : type,        update : update, valof  : valof,  x          : x
 	}, 'w' );
 
 	x( Object, Array, Boolean, Function );

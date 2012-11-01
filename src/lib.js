@@ -44,7 +44,7 @@
 			case 'object'  : mode = args.shift();        break;
 			default        :
 				 ntype = nativeType( desc );
-				 mode  = ntype != 'object' && defined ? Object.getOwnPropertyDescriptor( item, name ) : null;
+				 mode  = ntype != 'object' && defined ? description( item, name ) : null;
 				!mode || ( mode = ntype == 'function' ? modes.cw : modes.cew );
 		}
 		overwrite = args.shift() === true;
@@ -70,6 +70,9 @@
 	}
 	function describe( desc, mode ) {
 		return copy( ( nativeType( desc ) == 'object' ? desc : { value : desc } ), ( nativeType( mode ) == 'object' ? mode : modes[String( mode ).toLowerCase()] || modes.cew ), true );
+	}
+	function description( item, property ) {
+		return Object.getOwnPropertyDescriptor( item, property );
 	}
 
 	function empty( item ) { return !exists( item ) || ( !len( item ) && iter( item ) ) || false; }
@@ -179,7 +182,7 @@
 
 		if ( test( item, property ) )
 			return true;
-			
+
 		if ( typeof item != 'string' && !!~property.indexOf( '.' ) ) {
 			property = property.split( '.' );
 
