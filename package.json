@@ -11,7 +11,7 @@
 		"mocha"       : ">= 1.4.2"
  	},
  	"engines"         : {
- 		"node"        : ">= 0.4.x"
+ 		"node"        : ">= 0.8.x"
  	},
 	"keywords"        : ["api", "framework", "functional", "javascript", "library", "programming", "utility"],
 	"licenses"        : [ {
