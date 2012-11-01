@@ -226,18 +226,24 @@
 		return dtype == htmdoc ? htmdoc : ( dtype == htmcol || dtype == 'nodelist' ) ? htmcol : ( !dtype.indexOf( 'htm' ) && ( dtype.lastIndexOf( 'element' ) + 7 === dtype.length ) ) ? 'htmlelement' : false;
 	}
 	function nativeType( item ) {
-		var ntype = tostr( item );
-		if ( ntype in types ) return types[ntype]; // check the cached types first
-		return ( types[ntype] = ntype.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase() );
+		var native_type = tostr( item );
+		if ( native_type in ntype_cache ) return ntype_cache[native_type]; // check the ntype_cache first
+		return ( ntype_cache[native_type] = native_type.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase() );
 	}
 	function type( item ) {
-		return item === null || item === UNDEF
-			 ? false
-			 : got( item, __type__ )
-			 ? item[__type__]
-			 : Object.getPrototypeOf( item ) === null
-			 ? 'nullobject'
-			 : UNDEF;
+		if ( item === null || item === UNDEF )
+			return false;
+
+		var t = got( item, __type__ )
+			  ? item[__type__] : Object.getPrototypeOf( item ) === null
+			  ? 'nullobject'   : UNDEF;
+
+		return t !== 'object'
+			 ? t
+			 : ( property_exists( has, item, 'configurable', 'enumerable', 'writable' ) && has( item, 'value' )
+			 ||  property_exists( has, item, 'get', 'set' ) )
+			 ? 'descriptor'
+			 : t;
 	}
 
 	function update( target, source ) {

@@ -8,8 +8,11 @@
 // this will be used by the bless method to check if a context root is a commonjs module or not.
 // this way we know whether to assign the namespace been blessed to module.exports or not.
 		Module    = ENV != 'commonjs' ? null : require( 'module' ),
-		force     = [false, NaN, null, true, UNDEF].reduce( function( res, val ) { res[String( val )] = val; return res; }, obj() ),
-		htmcol    = 'htmlcollection', htmdoc = 'htmldocument', id_count  = 999, id_prefix = 'anon',
+		force     = [false, NaN, null, true, UNDEF].reduce( function( res, val ) {
+			res[String( val )] = val; return res;
+		}, obj() ),
+		htmcol    = 'htmlcollection', htmdoc = 'htmldocument',
+		id_count  = 999, id_prefix = 'anon',
 // this is a Map of all the different combinations of permissions for assigning property descriptors using Object.defineProperty
 		modes     = function() {
 			var mode_combos = { ce : 'ec', cw : 'wc', ew : 'we', cew : 'cwe ecw ewc wce wec'.split( ' ' ) },
@@ -37,12 +40,11 @@
 			delete modes[UNDEF];
 			return modes;
 		}(),
-		randy     = Math.random,                 re_global = /global|window/i,
-		re_guid   = /[xy]/g,                     re_lib    = new RegExp( '^\\u005E?' + Name ),
-		re_name   = /[\s\(]*function([^\(]+).*/, re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
-		slice     = Array.prototype.slice,       tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
-		types     = { '[object Object]' : 'object' },
-		xcache    = {
+		ntype_cache = { '[object Object]' : 'object' }, randy     = Math.random, re_global = /global|window/i,
+		re_guid     = /[xy]/g,                          re_lib    = new RegExp( '^\\u005E?' + Name ),
+		re_name     = /[\s\(]*function([^\(]+).*/,      re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
+		slice       = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
+		xcache      = {
 			'Array'  : [], 'Boolean' : [], 'Date'   : [], 'Function' : [],
 			'Number' : [], 'Object'  : [], 'RegExp' : [], 'String'   : []
 		};

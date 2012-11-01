@@ -517,6 +517,10 @@ Returns the native `type` of the passed item. For normalised types use `m8.type`
 
    m8.nativeType( 0 );                                      // returns => "number"
 
+   m8.type( { enumerable : true, get : function() {} } );   // returns => "object"
+
+   m8.type( m8.description( window, 'document' ) );         // returns => "object"
+
    m8.nativeType( {} );                                     // returns => "object"
 
    m8.nativeType( Object.create( null ) );                  // returns => "object"
@@ -585,39 +589,43 @@ Returns the normalised `type` of the passed item.
 
 ```javascript
 
-   m8.type( null );                                   // returns => false
+   m8.type( null );                                       // returns => false
 
-   m8.type( undefined );                              // returns => false
+   m8.type( undefined );                                  // returns => false
 
-   m8.type( [] );                                     // returns => "array"
+   m8.type( [] );                                         // returns => "array"
 
-   m8.type( true );                                   // returns => "boolean"
+   m8.type( true );                                       // returns => "boolean"
 
-   m8.type( new Date() );                             // returns => "date"
+   m8.type( new Date() );                                 // returns => "date"
 
-   m8.type( function() {} );                          // returns => "function"
+   m8.type( { enumerable : true, get : function() {} } ); // returns => "descriptor"
 
-   m8.type( 0 );                                      // returns => "number"
+   m8.type( m8.description( window, 'document' ) );       // returns => "descriptor"
 
-   m8.type( NaN );                                    // returns => "nan"
+   m8.type( function() {} );                              // returns => "function"
 
-   m8.type( {} );                                     // returns => "object"
+   m8.type( 0 );                                          // returns => "number"
 
-   m8.type( Object.create( null ) );                  // returns => "nullobject"
+   m8.type( NaN );                                        // returns => "nan"
 
-   m8.type( /.*/ );                                   // returns => "regexp"
+   m8.type( Object.create( null ) );                      // returns => "nullobject"
 
-   m8.type( '' );                                     // returns => "string"
+   m8.type( {} );                                         // returns => "object"
 
-   m8.type( document.createElement( 'div' ) );        // returns => "htmlelement"
+   m8.type( /.*/ );                                       // returns => "regexp"
 
-   m8.type( document.querySelectorAll( 'div' ) );     // returns => "htmlcollection"
+   m8.type( '' );                                         // returns => "string"
 
-   m8.type( document.getElementsByTagName( 'div' ) ); // returns => "htmlcollection"
+   m8.type( document.createElement( 'div' ) );            // returns => "htmlelement"
 
-   m8.type( global );                                 // returns => "global"
+   m8.type( document.querySelectorAll( 'div' ) );         // returns => "htmlcollection"
 
-   m8.type( window );                                 // returns => "global"
+   m8.type( document.getElementsByTagName( 'div' ) );     // returns => "htmlcollection"
+
+   m8.type( global );                                     // returns => "global"
+
+   m8.type( window );                                     // returns => "global"
 
 ```
 

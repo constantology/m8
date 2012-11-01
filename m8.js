@@ -12,8 +12,11 @@
 // this will be used by the bless method to check if a context root is a commonjs module or not.
 // this way we know whether to assign the namespace been blessed to module.exports or not.
 		Module    = ENV != 'commonjs' ? null : require( 'module' ),
-		force     = [false, NaN, null, true, UNDEF].reduce( function( res, val ) { res[String( val )] = val; return res; }, obj() ),
-		htmcol    = 'htmlcollection', htmdoc = 'htmldocument', id_count  = 999, id_prefix = 'anon',
+		force     = [false, NaN, null, true, UNDEF].reduce( function( res, val ) {
+			res[String( val )] = val; return res;
+		}, obj() ),
+		htmcol    = 'htmlcollection', htmdoc = 'htmldocument',
+		id_count  = 999, id_prefix = 'anon',
 // this is a Map of all the different combinations of permissions for assigning property descriptors using Object.defineProperty
 		modes     = function() {
 			var mode_combos = { ce : 'ec', cw : 'wc', ew : 'we', cew : 'cwe ecw ewc wce wec'.split( ' ' ) },
@@ -41,12 +44,11 @@
 			delete modes[UNDEF];
 			return modes;
 		}(),
-		randy     = Math.random,                 re_global = /global|window/i,
-		re_guid   = /[xy]/g,                     re_lib    = new RegExp( '^\\u005E?' + Name ),
-		re_name   = /[\s\(]*function([^\(]+).*/, re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
-		slice     = Array.prototype.slice,       tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
-		types     = { '[object Object]' : 'object' },
-		xcache    = {
+		ntype_cache = { '[object Object]' : 'object' }, randy     = Math.random, re_global = /global|window/i,
+		re_guid     = /[xy]/g,                          re_lib    = new RegExp( '^\\u005E?' + Name ),
+		re_name     = /[\s\(]*function([^\(]+).*/,      re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
+		slice       = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
+		xcache      = {
 			'Array'  : [], 'Boolean' : [], 'Date'   : [], 'Function' : [],
 			'Number' : [], 'Object'  : [], 'RegExp' : [], 'String'   : []
 		};
@@ -280,18 +282,24 @@
 		return dtype == htmdoc ? htmdoc : ( dtype == htmcol || dtype == 'nodelist' ) ? htmcol : ( !dtype.indexOf( 'htm' ) && ( dtype.lastIndexOf( 'element' ) + 7 === dtype.length ) ) ? 'htmlelement' : false;
 	}
 	function nativeType( item ) {
-		var ntype = tostr( item );
-		if ( ntype in types ) return types[ntype]; // check the cached types first
-		return ( types[ntype] = ntype.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase() );
+		var native_type = tostr( item );
+		if ( native_type in ntype_cache ) return ntype_cache[native_type]; // check the ntype_cache first
+		return ( ntype_cache[native_type] = native_type.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase() );
 	}
 	function type( item ) {
-		return item === null || item === UNDEF
-			 ? false
-			 : got( item, __type__ )
-			 ? item[__type__]
-			 : Object.getPrototypeOf( item ) === null
-			 ? 'nullobject'
-			 : UNDEF;
+		if ( item === null || item === UNDEF )
+			return false;
+
+		var t = got( item, __type__ )
+			  ? item[__type__] : Object.getPrototypeOf( item ) === null
+			  ? 'nullobject'   : UNDEF;
+
+		return t !== 'object'
+			 ? t
+			 : ( property_exists( has, item, 'configurable', 'enumerable', 'writable' ) && has( item, 'value' )
+			 ||  property_exists( has, item, 'get', 'set' ) )
+			 ? 'descriptor'
+			 : t;
 	}
 
 	function update( target, source ) {
