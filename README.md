@@ -301,6 +301,9 @@ When `value` is anything but an Object, it is assigned to the `value` property o
 
 See `m8.modes` below for a list of available property descriptors.
 
+### m8.description( item:Object, property:String ):Object
+Shortened version for [Object.getOwnPropertyDescriptor](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/getOwnPropertyDescriptor).
+
 ### m8.empty( value:Mixed ):Boolean
 Returns `true` if the passed `value` does not exist (see `exist` below), is an empty Array, Object, String or any other enumerable type.
 
@@ -491,7 +494,7 @@ Tries the returns the `length` property of the passed `item`.
 ### m8.merge( target:Array|Object, source:Array|Object ):Boolean
 Performs a "deep copy" of all the properties in `source` to `target`, so that `target` does not reference any child Arrays and/ or Objects that belong to `source`.
 
-### m8.nativeType( item:Mixed ):String
+### m8.nativeType( item:Mixed ):String (alias: m8.ntype)
 Returns the native `type` of the passed item. For normalised types use `m8.type`.
 
 **Note:** All types are **always** in lowercase.
