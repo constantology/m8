@@ -35,6 +35,14 @@
 		return target;
 	}
 
+	function cpdef( target, source, no_overwrite ) {
+		no_overwrite = no_overwrite === true; source || ( source = target, target = obj() );
+		return Object.getOwnPropertyNames( source ).reduce( function( o, key ) {
+			( no_overwrite && has( o, key ) ) || def( o, key, description( source, key ) );
+			return o;
+		}, target );
+	}
+
 	function def( item, name, desc ) {
 		var args    = slice.call( arguments, 3 ),
 			defined = got( item, name ), debug, mode, ntype, overwrite;
@@ -62,12 +70,14 @@
 		}
 		return __lib__;
 	}
+
 	function defs( item, props, mode, overwrite, debug ) {
 		mode || ( mode = 'cw' );
 		for ( var key in props )
 			!has( props, key ) || def( item, key, props[key], mode, overwrite, debug );
 		return __lib__;
 	}
+
 	function describe( desc, mode ) {
 		return copy( ( nativeType( desc ) == 'object' ? desc : { value : desc } ), ( nativeType( mode ) == 'object' ? mode : modes[String( mode ).toLowerCase()] || modes.cew ), true );
 	}
@@ -80,21 +90,30 @@
 
 	function expose( lib, name, mod ) {
 		if ( typeof name != 'string' && lib[__name__] ) {
-			mod = name; name = lib[__name__];
+			mod  = name;
+			name = lib[__name__];
 		}
 
-		if ( ENV == 'commonjs' && is_mod( mod ) ) mod.exports = lib;
+		var conflict, defaults = obj();                            // make sure the exposed library has a type
+		defaults[__name__] = name; defaults[__type__] = 'library'; // of "library" and its name attached to it.
+
+		if ( ENV == 'commonjs' && is_mod( mod ) )
+			mod.exports = lib;
 		else {
 			mod || ( mod = root );
-			var conflict = mod[name],
-				desc     = describe( { value : lib }, 'ew' ); // make sure if lib is already defined it's not a primitive value!
-			( conflict && iter( conflict ) )                  // don't over-write what's there, just add lib to conflict as conflict.__
-			? def( ( lib = conflict ), '__', desc )           // however, all properties will be added to conflict, not lib and
-			: def( mod, name, desc );                         // conflict will be returned instead of lib
+
+			if ( ( conflict = mod[name] ) && iter( conflict ) ) {
+				conflict[name] = lib;
+				lib            = cpdef( conflict, lib );
+			}
+			else
+				def( mod, name, describe( { value : lib }, 'ew' ) );
+
+			if ( ENV == 'browser' )
+				typeof define != 'function' || !define.amd  || define( name, [], function() { return lib; } );
 		}
 
-		mod = obj(); mod[__name__] = name; mod[__type__] = 'library'; // make sure the exposed library has a type
-		defs( lib, mod, 'w', true );                                  // of "library" and its name attached to it.
+		defs( lib, defaults, 'w', true );
 
 		return lib; // return the exposed library, if it already exists this will allow us to re-assign our internal copy
 	}
@@ -167,14 +186,14 @@
 		return typeof props == 'object' ? copy( nobj, props ) : nobj;
 	}
 
-	function property_exists( test, item, property ) {
+	function prop_exists( test, item, property ) {
 		var key; property = String( property );
 
 		if ( arguments.length > 3 ) {
 			property = slice.call( arguments, 2 );
 
 			while ( key = property.shift() )
-				if ( property_exists( test, item, key ) )
+				if ( prop_exists( test, item, key ) )
 					return true;
 
 			return false;
@@ -187,7 +206,7 @@
 			property = property.split( '.' );
 
 			while ( key = property.shift() ) {
-				if ( !property_exists( test, item, key ) )
+				if ( !prop_exists( test, item, key ) )
 					return false;
 
 				item = item[key];
@@ -240,8 +259,8 @@
 
 		return t !== 'object'
 			 ? t
-			 : ( property_exists( has, item, 'configurable', 'enumerable', 'writable' ) && has( item, 'value' )
-			 ||  property_exists( has, item, 'get', 'set' ) )
+			 : ( prop_exists( has, item, 'configurable', 'enumerable', 'writable' ) && has( item, 'value' )
+			 ||  prop_exists( has, item, 'get', 'set' ) )
 			 ? 'descriptor'
 			 : t;
 	}

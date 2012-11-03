@@ -60,6 +60,38 @@ suite( 'm8', function() {
 
 		done();
 	} );
+
+	test( '<static> m8.cpdef', function( done ) {
+		var source = m8.obj(), target;
+
+		m8.defs( source, {
+			bar : {
+				get : function() { return 'foo'; },
+				set : function( val ) { return this.foo.bar = val; }
+			},
+			foo : { value : { bar : 'hello' } }
+		}, 'r' );
+
+		m8.defs( source, {
+			label : 'price',
+			value : '1234'
+		}, 'e' );
+
+		target = m8.cpdef( source );
+
+		expect( target ).to.eql( source );
+		expect( Object.keys( target ).sort() ).to.eql( ['label', 'value'] );
+		expect( Object.values( target ).sort() ).to.eql( ['1234', 'price'] );
+		expect( target.foo.bar ).to.eql( 'hello' );
+		expect( target.bar = 'this' ).to.eql( 'this' );
+		expect( target.bar ).to.eql( 'foo' );
+		expect( target.foo.bar ).to.eql( 'this' );
+
+		target = m8.cpdef( { bar : 'SHAZAAM!!!' }, source, true );
+		expect( target.bar ).to.eql( 'SHAZAAM!!!' );
+
+		done();
+	} );
 	
 	test( '<static> m8.def', function( done ) {
 		var o = {};
