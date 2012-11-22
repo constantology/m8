@@ -41,7 +41,7 @@
 			return modes;
 		}(),
 		ntype_cache = { '[object Object]' : 'object' }, randy     = Math.random, re_global = /global|window/i,
-		re_guid     = /[xy]/g,                          re_lib    = new RegExp( '^\\u005E?' + Name ),
+		re_gsub     = /\$?\{([^\}]+)\}/g,               re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
 		re_name     = /[\s\(]*function([^\(]+).*/,      re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
 		slice       = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
 		xcache      = {

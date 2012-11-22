@@ -45,7 +45,7 @@
 			return modes;
 		}(),
 		ntype_cache = { '[object Object]' : 'object' }, randy     = Math.random, re_global = /global|window/i,
-		re_guid     = /[xy]/g,                          re_lib    = new RegExp( '^\\u005E?' + Name ),
+		re_gsub     = /\$?\{([^\}]+)\}/g,               re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
 		re_name     = /[\s\(]*function([^\(]+).*/,      re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
 		slice       = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
 		xcache      = {
@@ -176,8 +176,14 @@
 
 	function fname( fn ) { return fn.name || fn.displayName || ( String( fn ).match( re_name ) || ['', ''] )[1].trim(); }
 
+	function format( str ) { return gsub( str, Array.coerce( arguments, 1 ) ); }
+
 	function got( item, property ) {
 		return String( property ) in Object( item );
+	}
+
+	function gsub( str, o, pattern ) {
+		return String( str ).replace( ( pattern || re_gsub ), function( m, p ) { return o[p] || ''; } );
 	}
 
 	// credit for guid goes here: gist.github.com/2295777
@@ -503,8 +509,8 @@
 		def        : def,        defs        : defs,
 		describe   : describe,   description : description,
 		empty      : empty,      exists      : exists,
-		expose     : expose,     got         : prop_exists.bind( null, got ),
-		guid       : guid,       has         : prop_exists.bind( null, has ),
+		expose     : expose,     format      : format, got : prop_exists.bind( null, got ),
+		gsub       : gsub,       guid        : guid,   has : prop_exists.bind( null, has ),
 		id         : id,         iter        : iter,
 		len        : len,        merge       : merge,
 		nativeType : nativeType, noop        : noop,

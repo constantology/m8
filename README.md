@@ -402,6 +402,21 @@ If the `library` is not going to be used as a commonjs module then the `module` 
 
 ```
 
+### m8.format( tpl:String, arg1:String[, arg2:String, ..., argN:String] ):String
+Replaces the – zero indexed – numeric tokens in the String with the passed parameters.
+
+If a token does not have a value, an empty String is used in its place.
+
+**NOTE:** `format` calls `gsub` internally.
+
+#### Example:
+
+```javascript
+
+   m8.format( '{0} {1} {2} {3}', 'lorem', 'ipsum', 'dolor' ) // returns => "lorem ipsum dolor "
+
+```
+
 ### m8.got( object:Object, key:String ):Boolean
 Returns `true` if `object` contains `key` based on the `in` operator.
 
@@ -416,6 +431,21 @@ Any type passed to `m8.got` is cast as an Object before checking it contains a s
    m8.got( foo, 'four' );     // returns => false
 
    m8.got( foo, '__type__' ); // returns => true
+
+```
+
+### m8.gsub( tpl:String, dictionary:String[]|String{}[, pattern:RegExp] ):String
+Replaces the tokens in the String with the values of the corresponding properties from the passed `dictionary` Object.
+
+Also accepts an optional second parameter allowing you to define your own token matching `pattern`.
+
+If a token does not have a value, an empty String is used in its place.
+
+#### Example:
+
+```javascript
+
+   m8.gsub( '{one} {two} {three} {four}', { one : 'lorem', two : 'ipsum', three : 'dolor' } ) // returns => "lorem ipsum dolor "
 
 ```
 

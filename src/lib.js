@@ -120,8 +120,14 @@
 
 	function fname( fn ) { return fn.name || fn.displayName || ( String( fn ).match( re_name ) || ['', ''] )[1].trim(); }
 
+	function format( str ) { return gsub( str, Array.coerce( arguments, 1 ) ); }
+
 	function got( item, property ) {
 		return String( property ) in Object( item );
+	}
+
+	function gsub( str, o, pattern ) {
+		return String( str ).replace( ( pattern || re_gsub ), function( m, p ) { return o[p] || ''; } );
 	}
 
 	// credit for guid goes here: gist.github.com/2295777

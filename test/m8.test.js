@@ -162,6 +162,12 @@ suite( 'm8', function() {
 
 		done();
 	} );
+
+	test( '<static> m8.format', function( done ) {
+		expect( m8.format( '{0}, {1}, {2}, {3}, {4}, {5}, {6}, ${7}, ${8}, ${9}', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine' ) ).to.deep.equal( 'zero, one, two, three, four, five, six, seven, eight, nine' );
+
+		done();
+	} );
 	
 	test( '<static> m8.got', function( done ) {
 		function Test( val ) { this.value = val; } Test.prototype = { foo : 'bar', baz : 'bam' };
@@ -179,6 +185,21 @@ suite( 'm8', function() {
 		expect( m8.got( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'zoo', 'goo.bar', 'items.0.foo.bar' ) ).to.equal( true );
 		expect( m8.got( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'items.1.foo.bar' ) ).to.equal( false );
 		expect( m8.got( { foo : { bar : 'baz' }, items : [{ foo : { bar : 'baz' } }] }, 'zoo', 'goo.bar', 'items.1.foo.bar' ) ).to.equal( false );
+
+		done();
+	} );
+
+	test( '<static> m8.gsub', function( done ) {
+		expect( m8.gsub( 'The {one} {two} {three} jumps over the ${four} ${five}.', {
+			one   : 'quick', two  : 'brown',
+			three : 'fox',   four : 'lazy',
+			five  : 'dog'
+		} ) ).to.deep.equal( 'The quick brown fox jumps over the lazy dog.' );
+		expect( m8.gsub( 'The ===one=== ===two=== ===three=== jumps over the ===four=== ===five===.', {
+			one   : 'quick', two  : 'brown',
+			three : 'fox',   four : 'lazy',
+			five  : 'dog'
+		}, /={3}([^=]+)={3}/g ) ).to.deep.equal( 'The quick brown fox jumps over the lazy dog.' );
 
 		done();
 	} );
