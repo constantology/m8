@@ -1,7 +1,7 @@
 ;!function( root, Name, PACKAGE ) {
 	"use strict";
 
-/*~  src/vars.js  ~*/
+/*~  m8/src/vars.js  ~*/
 // if ENV === commonjs we want root to be global
 	typeof global == 'undefined' ? root : ( root = global );
 
@@ -58,7 +58,7 @@
 			'Number' : [], 'Object'  : [], 'RegExp' : [], 'String'   : []
 		};
 
-/*~  src/lib.js  ~*/
+/*~  m8/src/lib.js  ~*/
 	function __lib__( val ) { return val; }
 
 	function bless( ns, ctx ) {
@@ -360,7 +360,7 @@
 		return o;
 	}
 
-/*~  src/lib.x.js  ~*/
+/*~  m8/src/lib.x.js  ~*/
 // Commonjs Modules 1.1.1: http://wiki.commonjs.org/wiki/Modules/1.1.1
 // notes section:          http://wiki.commonjs.org/wiki/Modules/ProposalForNativeExtension
 // specifies the possibility of sandboxing JavaScript Natives in Modules in future versions
@@ -387,7 +387,7 @@
 		Type[__xid__] = extenders.length;                           // assigned every time __lib__.x() is called, and
 	}                                                               // potentilly throwing overwrite errors.
 
-/*~  src/nativex.js  ~*/
+/*~  m8/src/nativex.js  ~*/
 	x.cache( 'Array', function( Type ) {
 		var PROTO = Type.prototype;
 
@@ -522,7 +522,7 @@
 		}, 'w' );
 	} );
 
-/*~  src/expose.js  ~*/
+/*~  m8/src/expose.js  ~*/
 	iter( PACKAGE ) || ( PACKAGE = ENV == 'commonjs' ? module : root );
 
 	defs( ( __lib__ = expose( __lib__, Name, PACKAGE ) ), {
