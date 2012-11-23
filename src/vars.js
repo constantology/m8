@@ -39,8 +39,13 @@
 				}, obj() );
 			delete modes[UNDEF];
 			return modes;
-		}(),
-		ntype_cache = { '[object Object]' : 'object' }, randy     = Math.random, re_global = /global|window/i,
+		}(), // pre-caching common types for faster checks
+		ntype_cache = 'Array Boolean Date Function Null Number Object RegExp String Undefined'
+		.split( ' ' ).reduce( function( cache, type ) {
+			cache['[object ' + type + ']'] = type.toLowerCase();
+			return cache;
+		}, obj() ),
+		randy       = Math.random, re_global = /global|window/i,
 		re_gsub     = /\$?\{([^\}]+)\}/g,               re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
 		re_name     = /[\s\(]*function([^\(]+).*/,      re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
 		slice       = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',

@@ -27,33 +27,33 @@ Suppose we have a module called `foo` with the following code:
 ```javascript
 
 // require m8
-   var m8 = require( 'm8' );
+    var m8 = require( 'm8' );
 
 // extend foo module's natives if sandboxed.
 // IMPORTANT: if the module IS NOT sandboxed, the natives in foo will have already been extended when m8 was required
 //            m8 keeps track of this and will only attempt to apply any newly added extensions.
-   m8.x( Object, Array, Boolean, Function );
+    m8.x( Object, Array, Boolean, Function );
 
 // caching new extensions for Array. won't actually extend anything at this point.
-   m8.x.cache( 'Array', function( Type ) { // <= notice 'Array' is a String, NOT the actual Array Function
-      m8.def( Type, m8.describe( function() {
-         /** some static method **/
-      }, 'w' ) );
+     m8.x.cache( 'Array', function( Type ) { // <= notice 'Array' is a String, NOT the actual Array Function
+       m8.def( Type, m8.describe( function() {
+          /** some static method **/
+       }, 'w' ) );
 
-      m8.defs( Type.prototype, {
-         doSomething     : function() { /** do something **/ },
-         doSomethingElse : function() { /** do something else **/ }
-      }, 'w' );
-   } );
+       m8.defs( Type.prototype, {
+          doSomething     : function() { /** do something **/ },
+          doSomethingElse : function() { /** do something else **/ }
+       }, 'w' );
+    } );
 
 // only extends foo module's Array! since it is the only Type to have more extensions added.
-   m8.x( Object, Array, Boolean, Function ); // no danger and no pointless iterations either.
+    m8.x( Object, Array, Boolean, Function ); // no danger and no pointless iterations either.
 
-   module.exports = {
+    module.exports = {
       extend : function() {
          m8.x.apply( m8, arguments );
-      }
-   };
+       }
+    };
 
 ```
 
@@ -62,7 +62,7 @@ We can then require `foo` from another module and pass it any Types we want to e
 ```javascript
 
 // extend this module's natives if sandboxed.
-   require( 'foo' ).extend( Object, Array, Boolean, Function );
+    require( 'foo' ).extend( Object, Array, Boolean, Function );
 
 // do all the stuff "JavaScript: The Good Parts" tells you not to do here, coz you're an animal!
 
@@ -81,11 +81,11 @@ m8 itself is a Function which returns the the first parameter passed to it.
 
 ```javascript
 
-   m8( true );            // returns => true
+    m8( true );            // returns => true
 
-   m8( 'foo' );           // returns => "foo"
+    m8( 'foo' );           // returns => "foo"
 
-   m8( { foo : 'bar' } ); // returns => { "foo" : "bar" }
+    m8( { foo : 'bar' } ); // returns => { "foo" : "bar" }
 
 ```
 
@@ -101,16 +101,16 @@ If a `context` Object is given, the Object tree created will be added to the `co
 ```javascript
 
 // m8.ENV == 'browser'
-   m8.bless( 'foo.bar' );       // creates => global.foo.bar
+    m8.bless( 'foo.bar' );       // creates => global.foo.bar
 
 // you can now do:
-   foo.bar.Something = function() {};
+    foo.bar.Something = function() {};
 
-   m8.bless( 'foo.bar', m8 );   // creates => m8.foo.bar
+    m8.bless( 'foo.bar', m8 );   // creates => m8.foo.bar
 
-   var bar = m8.bless( 'foo.bar' );
+    var bar = m8.bless( 'foo.bar' );
 
-   bar === foo.bar              // returns => true
+    bar === foo.bar              // returns => true
 
 ```
 
@@ -123,19 +123,19 @@ If a `context` Object is given, the Object tree created will be added to the `co
 // m8.ENV == 'commonjs'
 
 // inside my_commonjs_module.js
-   m8.bless( 'foo.bar', module );            // creates => module.exports.foo.bar
+    m8.bless( 'foo.bar', module );            // creates => module.exports.foo.bar
 
 // you can now do:
-   module.exports.foo.bar.Something = function() {};
+    module.exports.foo.bar.Something = function() {};
 
 // if you want to include "exports" in your namespace, you can do so by placing a carat (^) at the start of the String
-   m8.bless( '^exports.foo.bar', module ); // creates => module.exports.foo.bar
+    m8.bless( '^exports.foo.bar', module ); // creates => module.exports.foo.bar
 
 // otherwise, you will end up creating an extra exports Object, e.g:
-   m8.bless( 'exports.foo.bar', module ); // creates => module.exports.exports.foo.bar
+    m8.bless( 'exports.foo.bar', module ); // creates => module.exports.exports.foo.bar
 
 // alternatively, you can also do:
-   m8.bless( 'foo.bar', module.exports ); // creates => module.exports.foo.bar
+    m8.bless( 'foo.bar', module.exports ); // creates => module.exports.foo.bar
 
 ```
 
@@ -146,29 +146,29 @@ Attempts to coerce primitive values "trapped" in Strings, into their real types.
 
 ```javascript
 
-   m8.coerce( 'false' );       // returns false
+    m8.coerce( 'false' );       // returns false
 
-   m8.coerce( 'null' );        // returns null
+    m8.coerce( 'null' );        // returns null
 
-   m8.coerce( 'true' );        // returns true
+    m8.coerce( 'true' );        // returns true
 
-   m8.coerce( 'undefined' );   // returns undefined
+    m8.coerce( 'undefined' );   // returns undefined
 
-   m8.coerce( 'NaN' );         // returns NaN
+    m8.coerce( 'NaN' );         // returns NaN
 
-   m8.coerce( '0001' );        // returns 1
+    m8.coerce( '0001' );        // returns 1
 
-   m8.coerce( '0012' );        // returns 12
+    m8.coerce( '0012' );        // returns 12
 
-   m8.coerce( '0123' );        // returns 123
+    m8.coerce( '0123' );        // returns 123
 
-   m8.coerce( '123.4' );       // returns 123.4
+    m8.coerce( '123.4' );       // returns 123.4
 
-   m8.coerce( '123.45' );      // returns 123.45
+    m8.coerce( '123.45' );      // returns 123.45
 
-   m8.coerce( '123.456' );     // returns 123.456
+    m8.coerce( '123.456' );     // returns 123.456
 
-   m8.coerce( '123.456.789' ); // returns "123.456.789"
+    m8.coerce( '123.456.789' ); // returns "123.456.789"
 
 ```
 
@@ -179,14 +179,14 @@ Copies the properties – accessible via `Object.keys` – from the `source` Obj
 
 ```javascript
 
-   var foo = { one : 1, two : 2, three : 3 },
-       bar = m8.copy( {}, foo );
+    var foo = { one : 1, two : 2, three : 3 },
+        bar = m8.copy( {}, foo );
 
-   bar          // returns => { "one" : 1, "two" : 2, "three" : 3 }
+    bar          // returns => { "one" : 1, "two" : 2, "three" : 3 }
 
-   foo === bar  // returns => false
+    foo === bar  // returns => false
 
-   m8.copy( foo, { three : 3.3, four : 4 }, true ); // returns => { "one" : 1, "two" : 2, "three" : 3, "four" : 4 }
+    m8.copy( foo, { three : 3.3, four : 4 }, true ); // returns => { "one" : 1, "two" : 2, "three" : 3, "four" : 4 }
 
 ```
 
@@ -207,11 +207,11 @@ The last two – optional – parameters are handy for extending JavaScript Nati
 
 ```javascript
 
-   m8.def( Object, 'greet', m8.describe( function( name ) { return 'Hello ' + name + '!'; }, 'w' ) );
+    m8.def( Object, 'greet', m8.describe( function( name ) { return 'Hello ' + name + '!'; }, 'w' ) );
 
-   Object.greet( 'world' ); // returns => "Hello world!"
+    Object.greet( 'world' ); // returns => "Hello world!"
 
-   delete Object.greet;     // returns => false; Object.greet is not configurable
+    delete Object.greet;     // returns => false; Object.greet is not configurable
 
 ```
 
@@ -234,25 +234,25 @@ The last two – optional – parameters are handy for extending JavaScript Nati
 
 ```javascript
 
-   m8.defs( Object, {
-      accessor : { get : function() { return this.__accessor; }, set : function( a ) { this.__accessor = a; } },
-      global   : { value : window },
-      greeting : function( name ) { return 'Hello ' + name + '!'; }
-   }, 'w' ) );
+    m8.defs( Object, {
+       accessor : { get : function() { return this.__accessor; }, set : function( a ) { this.__accessor = a; } },
+       global   : { value : window },
+       greeting : function( name ) { return 'Hello ' + name + '!'; }
+    }, 'w' ) );
 /**
-   IMPORTANT TO NOTE: Accessors do not alllow the "writable" attribute to even be present in their descriptor Object.
+    IMPORTANT TO NOTE: Accessors do not alllow the "writable" attribute to even be present in their descriptor Object.
                       see: https://plus.google.com/117400647045355298632/posts/YTX1wMry8M2
                       m8.def handles this internally, so if a "get" or "set" accessor Function is in the descriptor, the
                       "writable" attribute will be removed from the descriptor, if it exists.
 **/
 
-   Object.accessor = 'foo'; // returns => 'foo'
-   Object.accessor;         // returns => 'foo'
+    Object.accessor = 'foo'; // returns => 'foo'
+    Object.accessor;         // returns => 'foo'
 
-   Object.global === window // returns => true
-   Object.greet( 'world' ); // returns => "Hello world!"
+    Object.global === window // returns => true
+    Object.greet( 'world' ); // returns => "Hello world!"
 
-   delete Object.greet;     // returns => false; Object.greet is not configurable
+    delete Object.greet;     // returns => false; Object.greet is not configurable
 
 ```
 
@@ -267,18 +267,18 @@ When `value` is an Object `m8.describe` assumes you are passing it a property de
 
 ```javascript
 
-   m8.describe( {
-      get : function() { ... },
-      set : function() { ... }
-   }, 'cw' );
+    m8.describe( {
+       get : function() { ... },
+       set : function() { ... }
+    }, 'cw' );
 
-   /* returns => {
-       configurable : true,
-       enumerable   : false,
-       get          : function() { ... },
-       set          : function() { ... },
-       writable     : true // NOTE: this property is illegal in an accessor descriptor. however, m8.def will handle this internally saving you tears
-   } */
+    /*  returns => {
+        configurable : true,
+        enumerable   : false,
+        get          : function() { ... },
+        set          : function() { ... },
+        writable     : true // NOTE: this property is illegal in an accessor descriptor. however, m8.def will handle this internally saving you tears
+    } */
 
 ```
 
@@ -288,14 +288,14 @@ When `value` is anything but an Object, it is assigned to the `value` property o
 
 ```javascript
 
-   m8.describe( function() { ... }, m8.modes.c );
+    m8.describe( function() { ... }, m8.modes.c );
 
-   /* returns => {
-       configurable : true,
-       enumerable   : false,
-       value        : function() { ... },
-       writeable    : false
-   } */
+    /* returns => {
+        configurable : true,
+        enumerable   : false,
+        value        : function() { ... },
+        writeable    : false
+    } */
 
 ```
 
@@ -311,21 +311,21 @@ Returns `true` if the passed `value` does not exist (see `exist` below), is an e
 
 ```javascript
 
-   m8.empty( undefined );    // returns => true
+    m8.empty( undefined );    // returns => true
 
-   m8.empty( null );         // returns => true
+    m8.empty( null );         // returns => true
 
-   m8.empty( '' );           // returns => true
+    m8.empty( '' );           // returns => true
 
-   m8.empty( [] );           // returns => true
+    m8.empty( [] );           // returns => true
 
-   m8.empty( {} );           // returns => true
+    m8.empty( {} );           // returns => true
 
-   m8.empty( ' ' );          // returns => false
+    m8.empty( ' ' );          // returns => false
 
-   m8.empty( [1] );          // returns => false
+    m8.empty( [1] );          // returns => false
 
-   m8.empty( { 0 : null } ); // returns => false
+    m8.empty( { 0 : null } ); // returns => false
 
 ```
 
@@ -336,17 +336,17 @@ Returns `false` if the passed `value` is `undefined` , `NaN` or `null`, returns 
 
 ```javascript
 
-   m8.exists( undefined ); // returns => false
+    m8.exists( undefined ); // returns => false
 
-   m8.exists( NaN );       // returns => false
+    m8.exists( NaN );       // returns => false
 
-   m8.exists( null );      // returns => false
+    m8.exists( null );      // returns => false
 
-   m8.exists( 0 );         // returns => true
+    m8.exists( 0 );         // returns => true
 
-   m8.exists( false );     // returns => true
+    m8.exists( false );     // returns => true
 
-   m8.exists( {} );        // returns => true
+    m8.exists( {} );        // returns => true
 
 ```
 
@@ -363,42 +363,42 @@ If the `library` is not going to be used as a commonjs module then the `module` 
 
 ```javascript
 
-   // browser based version
-   ;!function() {
+    // browser based version
+    ;!function() {
 
       var my_library = { /* you awesome library api here */ };
 
       m8.expose( my_library, 'foo' );
 
-   }();
+    }();
 
-   m8.type( foo )   // returns => "library"
+    m8.type( foo )   // returns => "library"
 
-   foo.__name__     // returns => "foo"
+    foo.__name__     // returns => "foo"
 
-   m8.expose( m8, foo );
+    m8.expose( m8, foo );
 
-   foo.m8 === m8    // returns => true
+    foo.m8 === m8    // returns => true
 
-   m8.expose( m8, 'bar', foo );
+    m8.expose( m8, 'bar', foo );
+ 
+    foo.bar === m8   // returns => true
 
-   foo.bar === m8   // returns => true
-
-   foo.bar.__name__ // returns => "m8"
+    foo.bar.__name__ // returns => "m8"
 
 ```
 
 ```javascript
 
-   // commonjs based version
-   var m8         = require( 'm8' ),
-       my_library = { /* you awesome library api here */ };
+    // commonjs based version
+    var m8         = require( 'm8' ),
+        my_library = { /* you awesome library api here */ };
 
-   m8.expose( my_library, 'foo', module );
+    m8.expose( my_library, 'foo', module );
 
-   m8.type( foo );  // returns => 'library'
+    m8.type( foo );  // returns => 'library'
 
-   foo.__name__;    // returns => 'foo'
+    foo.__name__;    // returns => 'foo'
 
 ```
 
@@ -413,7 +413,7 @@ If a token does not have a value, an empty String is used in its place.
 
 ```javascript
 
-   m8.format( '{0} {1} {2} {3}', 'lorem', 'ipsum', 'dolor' ) // returns => "lorem ipsum dolor "
+    m8.format( '{0} {1} {2} {3}', 'lorem', 'ipsum', 'dolor' ) // returns => "lorem ipsum dolor "
 
 ```
 
@@ -424,13 +424,13 @@ Any type passed to `m8.got` is cast as an Object before checking it contains a s
 
 ```javascript
 
-   var foo = { one : 1, two : 2, three : 3 };
+    var foo = { one : 1, two : 2, three : 3 };
 
-   m8.got( foo, 'one' );      // returns => true
+    m8.got( foo, 'one' );      // returns => true
 
-   m8.got( foo, 'four' );     // returns => false
+    m8.got( foo, 'four' );     // returns => false
 
-   m8.got( foo, '__type__' ); // returns => true
+    m8.got( foo, '__type__' ); // returns => true
 
 ```
 
@@ -445,7 +445,7 @@ If a token does not have a value, an empty String is used in its place.
 
 ```javascript
 
-   m8.gsub( '{one} {two} {three} {four}', { one : 'lorem', two : 'ipsum', three : 'dolor' } ) // returns => "lorem ipsum dolor "
+    m8.gsub( '{one} {two} {three} {four}', { one : 'lorem', two : 'ipsum', three : 'dolor' } ) // returns => "lorem ipsum dolor "
 
 ```
 
@@ -465,13 +465,13 @@ Shortened version of `Object.prototype.hasOwnProperty.call`.
 
 ```javascript
 
-   var foo = { one : 1, two : 2, three : 3 };
+    var foo = { one : 1, two : 2, three : 3 };
 
-   m8.has( foo, 'one' );      // returns => true
+    m8.has( foo, 'one' );      // returns => true
 
-   m8.has( foo, 'four' );     // returns => false
+    m8.has( foo, 'four' );     // returns => false
 
-   m8.has( foo, '__type__' ); // returns => false
+    m8.has( foo, '__type__' ); // returns => false
 
 ```
 
@@ -488,15 +488,15 @@ An internal counter that is automatically incremented is appended to the end of 
 
 ```javascript
 
-   var foo = { id   : 'foo' },
+    var foo = { id   : 'foo' },
        bar = { name : 'bar' },
        yum = { nam  : 'yum' };
 
-   m8.id( foo );         // returns => "foo"
+    m8.id( foo );         // returns => "foo"
 
-   m8.id( bar );         // returns => "anon-1000"
+    m8.id( bar );         // returns => "anon-1000"
 
-   m8.id( yum, 'yum' );  // returns => "yum-1001"
+    m8.id( yum, 'yum' );  // returns => "yum-1001"
 
 ```
 
@@ -510,14 +510,14 @@ Tries the returns the `length` property of the passed `item`.
 
 ```javascript
 
-   m8.len( { one : 1, two : 2, three : 3 } ); // returns => 3
+    m8.len( { one : 1, two : 2, three : 3 } ); // returns => 3
 
-   m8.len( [1, 2, 3] );                       // returns => 3
+    m8.len( [1, 2, 3] );                       // returns => 3
 
-   m8.len( 'foobar' );                        // returns => 6
+    m8.len( 'foobar' );                        // returns => 6
 
-   m8.len( { one : 1, two : 2, three : 3 } ) === Object.keys( { one : 1, two : 2, three : 3 } ).length
-   // returns => true
+    m8.len( { one : 1, two : 2, three : 3 } ) === Object.keys( { one : 1, two : 2, three : 3 } ).length
+    // returns => true
 
 ```
 
@@ -533,41 +533,41 @@ Returns the native `type` of the passed item. For normalised types use `m8.type`
 
 ```javascript
 
-   m8.nativeType( null );                                   // returns => "null"
+    m8.nativeType( null );                                   // returns => "null"
 
-   m8.nativeType( undefined );                              // returns => "undefined"
+    m8.nativeType( undefined );                              // returns => "undefined"
 
-   m8.nativeType( [] );                                     // returns => "array"
+    m8.nativeType( [] );                                     // returns => "array"
 
-   m8.nativeType( true );                                   // returns => "boolean"
+    m8.nativeType( true );                                   // returns => "boolean"
 
-   m8.nativeType( new Date() );                             // returns => "date"
+    m8.nativeType( new Date() );                             // returns => "date"
 
-   m8.nativeType( function() {} );                          // returns => "function"
+    m8.nativeType( function() {} );                          // returns => "function"
 
-   m8.nativeType( 0 );                                      // returns => "number"
+    m8.nativeType( 0 );                                      // returns => "number"
 
-   m8.type( { enumerable : true, get : function() {} } );   // returns => "object"
+    m8.type( { enumerable : true, get : function() {} } );   // returns => "object"
 
-   m8.type( m8.description( window, 'document' ) );         // returns => "object"
+    m8.type( m8.description( window, 'document' ) );         // returns => "object"
 
-   m8.nativeType( {} );                                     // returns => "object"
+    m8.nativeType( {} );                                     // returns => "object"
 
-   m8.nativeType( Object.create( null ) );                  // returns => "object"
+    m8.nativeType( Object.create( null ) );                  // returns => "object"
 
-   m8.nativeType( /.*/ );                                   // returns => "regexp"
+    m8.nativeType( /.*/ );                                   // returns => "regexp"
 
-   m8.nativeType( '' );                                     // returns => "string"
+    m8.nativeType( '' );                                     // returns => "string"
 
-   m8.nativeType( document.createElement( 'div' ) );        // returns => "htmldivelement"
+    m8.nativeType( document.createElement( 'div' ) );        // returns => "htmldivelement"
 
-   m8.nativeType( document.querySelectorAll( 'div' ) );     // returns => "htmlcollection" | "nodelist"
+    m8.nativeType( document.querySelectorAll( 'div' ) );     // returns => "htmlcollection" | "nodelist"
 
-   m8.nativeType( document.getElementsByTagName( 'div' ) ); // returns => "htmlcollection" | "nodelist"
+    m8.nativeType( document.getElementsByTagName( 'div' ) ); // returns => "htmlcollection" | "nodelist"
 
-   m8.nativeType( global );                                 // returns => "global"
+    m8.nativeType( global );                                 // returns => "global"
 
-   m8.nativeType( window );                                 // returns => "global" | "window"
+    m8.nativeType( window );                                 // returns => "global" | "window"
 
 ```
 
@@ -590,20 +590,20 @@ If removing items from an Object, you simply pass the key of the item you want t
 
 ```javascript
 
-   var foo_arr = ['one', 'two', 'three'],
+    var foo_arr = ['one', 'two', 'three'],
        foo_obj = { one : 1, two : 2, three : 3 };
 
-   m8.remove( foo_arr, 'one', 'three' );   // returns => ['two']
+    m8.remove( foo_arr, 'one', 'three' );   // returns => ['two']
 
-   m8.remove( foo_arr, ['one', 'three'] ); // same as above
+    m8.remove( foo_arr, ['one', 'three'] ); // same as above
 
-   m8.remove( foo_arr, 0, 2 );             // same as above
+    m8.remove( foo_arr, 0, 2 );             // same as above
 
-   m8.remove( foo_arr, [0, 2] );           // same as above
+    m8.remove( foo_arr, [0, 2] );           // same as above
 
-   m8.remove( foo_obj, 'one', 'three' );   // returns => { two : 2 }
+    m8.remove( foo_obj, 'one', 'three' );   // returns => { two : 2 }
 
-   m8.remove( foo_obj, ['one', 'three'] ); // same as above
+    m8.remove( foo_obj, ['one', 'three'] ); // same as above
 
 ```
 
@@ -619,43 +619,43 @@ Returns the normalised `type` of the passed item.
 
 ```javascript
 
-   m8.type( null );                                       // returns => false
+    m8.type( null );                                       // returns => false
 
-   m8.type( undefined );                                  // returns => false
+    m8.type( undefined );                                  // returns => false
 
-   m8.type( [] );                                         // returns => "array"
+    m8.type( [] );                                         // returns => "array"
 
-   m8.type( true );                                       // returns => "boolean"
+    m8.type( true );                                       // returns => "boolean"
 
-   m8.type( new Date() );                                 // returns => "date"
+    m8.type( new Date() );                                 // returns => "date"
 
-   m8.type( { enumerable : true, get : function() {} } ); // returns => "descriptor"
+    m8.type( { enumerable : true, get : function() {} } ); // returns => "descriptor"
 
-   m8.type( m8.description( window, 'document' ) );       // returns => "descriptor"
+    m8.type( m8.description( window, 'document' ) );       // returns => "descriptor"
 
-   m8.type( function() {} );                              // returns => "function"
+    m8.type( function() {} );                              // returns => "function"
 
-   m8.type( 0 );                                          // returns => "number"
+    m8.type( 0 );                                          // returns => "number"
 
-   m8.type( NaN );                                        // returns => "nan"
+    m8.type( NaN );                                        // returns => "nan"
 
-   m8.type( Object.create( null ) );                      // returns => "nullobject"
+    m8.type( Object.create( null ) );                      // returns => "nullobject"
 
-   m8.type( {} );                                         // returns => "object"
+    m8.type( {} );                                         // returns => "object"
 
-   m8.type( /.*/ );                                       // returns => "regexp"
+    m8.type( /.*/ );                                       // returns => "regexp"
 
-   m8.type( '' );                                         // returns => "string"
+    m8.type( '' );                                         // returns => "string"
 
-   m8.type( document.createElement( 'div' ) );            // returns => "htmlelement"
+    m8.type( document.createElement( 'div' ) );            // returns => "htmlelement"
 
-   m8.type( document.querySelectorAll( 'div' ) );         // returns => "htmlcollection"
+    m8.type( document.querySelectorAll( 'div' ) );         // returns => "htmlcollection"
 
-   m8.type( document.getElementsByTagName( 'div' ) );     // returns => "htmlcollection"
+    m8.type( document.getElementsByTagName( 'div' ) );     // returns => "htmlcollection"
 
-   m8.type( global );                                     // returns => "global"
+    m8.type( global );                                     // returns => "global"
 
-   m8.type( window );                                     // returns => "global"
+    m8.type( window );                                     // returns => "global"
 
 ```
 
@@ -722,33 +722,33 @@ If a `index_to` is a valid Number, then `Array.coerce` will attempt to return a 
 
 ```html
 
-   <body>
+    <body>
       <div id="one"></div>
       <div id="two"></div>
       <div id="three"></div>
-   </body>
+    </body>
 
 ```
 
 ```javascript
 
-   Array.coerce( document.body.children );                               // returns => [div#one, div#two, div#three]
+    Array.coerce( document.body.children );                               // returns => [div#one, div#two, div#three]
 
-   Array.coerce( document.body.querySelectorAll( '*' ) );                // returns => [div#one, div#two, div#three]
+    Array.coerce( document.body.querySelectorAll( '*' ) );                // returns => [div#one, div#two, div#three]
 
-   Array.coerce( function( a, b, c ) { return arguments; }( 1, 2, 3 ) ); // returns => [1, 2, 3]
+    Array.coerce( function( a, b, c ) { return arguments; }( 1, 2, 3 ) ); // returns => [1, 2, 3]
 
-   Array.coerce( { one : 1, two : 2, three : 3 } );                      // returns => [{ one : 1, two : 2, three : 3 }]
+    Array.coerce( { one : 1, two : 2, three : 3 } );                      // returns => [{ one : 1, two : 2, three : 3 }]
 
-   Array.coerce( [1, 2, 3, 4, 5, 6, 7], 3 );                             // returns => [4, 5, 6, 7]
+    Array.coerce( [1, 2, 3, 4, 5, 6, 7], 3 );                             // returns => [4, 5, 6, 7]
 
-   Array.coerce( [1, 2, 3, 4, 5, 6, 7], 3, 0 );                          // returns => [4, 5, 6, 7]
+    Array.coerce( [1, 2, 3, 4, 5, 6, 7], 3, 0 );                          // returns => [4, 5, 6, 7]
 
-   Array.coerce( [1, 2, 3, 4, 5, 6, 7], 1, 3 );                          // returns => [2, 3]
+    Array.coerce( [1, 2, 3, 4, 5, 6, 7], 1, 3 );                          // returns => [2, 3]
 
-   Array.coerce( [1, 2, 3, 4, 5, 6, 7], 3, 2 );                          // returns => [4, 5]
+    Array.coerce( [1, 2, 3, 4, 5, 6, 7], 3, 2 );                          // returns => [4, 5]
 
-   Array.coerce( [1, 2, 3, 4, 5, 6, 7], 3, -1 );                         // returns => [4, 5, 6]
+    Array.coerce( [1, 2, 3, 4, 5, 6, 7], 3, -1 );                         // returns => [4, 5, 6]
 
 ```
 
@@ -759,15 +759,51 @@ Returns the first item in the Array that returns a "truthy" value when executing
 
 ```javascript
 
-   [1, 2, 3, 4].find( function( value ) { return value > 2; } );                     // returns => 3
+    [1, 2, 3, 4].find( function( value ) { return value > 2; } );                     // returns => 3
 
-   [1, 2, 3, 4].find( function( value, index ) { return value > 2 && index > 2; } ); // returns => 4
+    [1, 2, 3, 4].find( function( value, index ) { return value > 2 && index > 2; } ); // returns => 4
 
-   [1, 2, 3, 4].find( function( value ) { return value > 4; } );                     // returns => null
+    [1, 2, 3, 4].find( function( value ) { return value > 4; } );                     // returns => null
 
 ```
 
-**REMEMBER:** The ACTUAL item in the Array is returned, NOT the `iterator`'s return value.
+**REMEMBER:** The ACTUAL item in the Array is returned, **NOT** the `iterator`'s return value.
+
+### Array.prototype.invoke( method:String[, arg1:Mixed, arg2:Mixed, ..., argN:Mixed] ):Array
+Executes the passed `method` — **NOTE:** `method` is a String, and should be the name of `method` that exists on each item in the Array — passing any extra arguments to each method call.
+
+#### Example:
+
+```javascript
+
+    ['lorem', 'ipsum', 'dolor', 'sit', 'amet'].invoke( 'toUpperCase' ); // returns => ["LOREM", "IPSUM", "DOLOR", "SIT", "AMET"]
+
+    [1, 2, 3, 4, 5, 6, 7, 8].invoke( 'toString', 2 );                   // returns => ['1', '10', '11', '100', '101', '110', '111', '1000']
+
+```
+
+### Array.prototype.pluck( key:String[, compact:Boolean] ):Array
+Returns a new Array where all the items are the values of the passed property `key`.
+
+If `compact` is set to `true` then all `NaN`, `null` and `undefined` values will be omitted from the returned Array.
+
+**NOTE:** Unlike other `pluck` implementations, this implementation has a "smarter" way to get property values, allows you to `pluck` nested Object values, as well as HTML attributes.
+
+#### Example:
+
+```javascript
+
+    var data = [{ data : { value : 'foo' } }, { data : { value : 'bar' } }, {}, { value : 'blim' }, { data : { value : 'blam' } }];
+
+// slower, has to iterate twice
+    data.pluck( 'data' ).pluck( 'value' );  // returns => ["foo", "bar", undefined, undefined, "blam"]
+
+// optimised version of the above
+    data.pluck( 'data.value' );             // returns => ["foo", "bar", undefined, undefined, "blam"]
+
+    data.pluck( 'data.value', true );       // returns => ["foo", "bar", "blam"]
+
+```
 
 ### Boolean.coerce( value:Mixed ):Boolean
 Handy for working with Booleans trapped in Strings.
@@ -778,17 +814,17 @@ Everything will return `true`, except for the following which all return `false`
 
 ```javascript
 
-   Boolean.coerce( 'false' );     Boolean.coerce(  false  );
+    Boolean.coerce( 'false' );     Boolean.coerce(  false  );
 
-   Boolean.coerce( '0' );         Boolean.coerce(  0  );
+    Boolean.coerce( '0' );         Boolean.coerce(  0  );
 
-   Boolean.coerce( 'NaN' );       Boolean.coerce(  NaN  );
+    Boolean.coerce( 'NaN' );       Boolean.coerce(  NaN  );
 
-   Boolean.coerce( 'null' );      Boolean.coerce(  null  );
+    Boolean.coerce( 'null' );      Boolean.coerce(  null  );
 
-   Boolean.coerce( 'undefined' ); Boolean.coerce(  undefined );
+    Boolean.coerce( 'undefined' ); Boolean.coerce(  undefined );
 
-   Boolean.coerce();              Boolean.coerce( '' );
+    Boolean.coerce();              Boolean.coerce( '' );
 
 ```
 
@@ -809,13 +845,13 @@ If a `name` param is passed, then it is used as the `displayName`, otherwise the
 
 ```javascript
 
-   function foo( a, b, c ) { ... }
+    function foo( a, b, c ) { ... }
 
-   foo.__name__;                                          // returns => "foo"
+    foo.__name__;                                          // returns => "foo"
 
-   ( function( a, b, c ) { ... } ).__name__;              // returns => "anonymous"
+    ( function( a, b, c ) { ... } ).__name__;              // returns => "anonymous"
 
-   function bar( a, b, c ) { ... }.mimic( foo ).__name__; // returns => "foo"
+    function bar( a, b, c ) { ... }.mimic( foo ).__name__; // returns => "foo"
 
 ```
 
@@ -828,11 +864,11 @@ Returns the `object`'s property `key` for the passed `value` if `value` is a pro
 
 ```javascript
 
-   var foo = { one : 1, two : 2, three : 3 };
+    var foo = { one : 1, two : 2, three : 3 };
 
-   Object.key( foo, 2 ); // returns => "two"
+    Object.key( foo, 2 ); // returns => "two"
 
-   Object.key( foo, 4 ); // returns => null
+    Object.key( foo, 4 ); // returns => null
 
 ```
 
@@ -854,10 +890,10 @@ The `iterator` Function will receive 5 arguments:
 ```javascript
 
 // the sum of all values of the passed object
-   Object.reduce( { one : 1, two : 2, three : 3 }, function( previous_value, value, key, index, object ) {
+    Object.reduce( { one : 1, two : 2, three : 3 }, function( previous_value, value, key, index, object ) {
         console.log( 'previous_value : ', previous_value, ', value : ', value, ', key : ', key, ', index : ', index );
 		return previous_value += value;
-   }, 0 );
+    }, 0 );
 // logs    => previous_value : 0, value : 1, key : one,   index : 0
 // logs    => previous_value : 1, value : 2, key : two,   index : 1
 // logs    => previous_value : 3, value : 3, key : three, index : 2
@@ -877,17 +913,17 @@ Returns the property value at the specified path in an Object.
 
 ```javascript
 
-   var data = { one : { two : { three : true, four : [1, 2, 3, 4] } } };
+    var data = { one : { two : { three : true, four : [1, 2, 3, 4] } } };
 
-   Object.value( data, 'one' );            // returns => { two : { three : true, four : [1, 2, 3, 4] } }
+    Object.value( data, 'one' );            // returns => { two : { three : true, four : [1, 2, 3, 4] } }
 
-   Object.value( data, 'one.two' );        // returns => { three : true, four : [1, 2, 3, 4] }
+    Object.value( data, 'one.two' );        // returns => { three : true, four : [1, 2, 3, 4] }
 
-   Object.value( data, 'one.two.three' );  // returns => { three : true }
+    Object.value( data, 'one.two.three' );  // returns => { three : true }
 
-   Object.value( data, 'one.two.four' );   // returns => [1, 2, 3, 4]
+    Object.value( data, 'one.two.four' );   // returns => [1, 2, 3, 4]
 
-   Object.value( data, 'one.two.four.2' ); // returns => 3
+    Object.value( data, 'one.two.four.2' ); // returns => 3
 
 ```
 
@@ -898,7 +934,7 @@ Returns the `values` of the passed Object based on it's enumerable keys.
 
 ```javascript
 
-   Object.values( { one : 1, two : 2, three : 3 } ); // returns => [1,2,3]
+    Object.values( { one : 1, two : 2, three : 3 } ); // returns => [1,2,3]
 
 ```
 
@@ -909,8 +945,8 @@ Attempts to resolve a normalised type for any type that inherits from JavaScript
 
 ## File size
 
-- m8.js ≅ 6kb (gzipped)
-- m8.min.js ≅ 3.3kb (minzipped)
+- m8.js ≅ 6.2kb (gzipped)
+- m8.min.js ≅ 3.5kb (minzipped)
 
 ## License
 

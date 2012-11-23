@@ -385,6 +385,43 @@ suite( 'm8', function() {
 		done();
 	} );
 
+	test( 'Array.prototype.find', function( done ) {
+		expect( m8.range( 1, 5 ).find( function( v ) { return v == 3; } ) ).to.deep.equal( 3 );
+		expect( m8.range( 1, 5 ).find( function( v ) { return v == 6; } ) ).to.equal( null );
+
+		done();
+	} );
+
+	test( 'Array.prototype.invoke', function( done ) {
+		expect( m8.range( 1, 5 ).invoke( 'toFixed', 2 ) ).to.deep.equal( ['1.00', '2.00', '3.00', '4.00', '5.00'] );
+		expect( m8.range( 1, 7 ).invoke( 'toString', 2 ) ).to.deep.equal( ['1', '10', '11', '100', '101', '110', '111'] );
+
+		done();
+	} );
+
+	test( 'Array.prototype.pluck', function( done ) {
+		expect( [
+			{ 'one' : 1, 'two' : 2, 'three' : 3 },
+			{ 'one' : 1, 'two' : 2, 'three' : 3 },
+			{ 'one' : 1, 'two' : 2, 'three' : 3 }
+		].pluck( 'two' ) ).to.deep.equal( [2, 2, 2] );
+		expect( [
+			{ 'one' : 1,         'two' : 2, 'three' : 3 },
+			{ 'one' : undefined, 'two' : 2, 'three' : 3 },
+			{ 'one' : 1,         'two' : 2, 'three' : 3 },
+			{ 'one' : null,      'two' : 2, 'three' : 3 },
+			{ 'one' : 1,         'two' : 2, 'three' : 3 }
+		].pluck( 'one', true ) ).to.deep.equal( [1, 1, 1] );
+		expect( m8.range( 1, 10 ).map( function( o, i ) {
+			return { src : { val : i } };
+		} ).pluck( 'src.val' ) ).to.deep.equal( m8.range( 0, 9 ) );
+		expect( m8.range( 1, 10 ).map( function( o, i ) {
+			return { src : { val : { id : i % 2 ? i : null } } };
+		} ).pluck( 'src.val.id', true ) ).to.deep.equal( [1, 3, 5, 7, 9] );
+
+		done();
+	} );
+
 	test( '<static> Boolean.coerce: returns true for true like Strings', function( done ) {
 		expect( Boolean.coerce( true ) ).to.equal( true );
 		expect( Boolean.coerce( 'true' ) ).to.equal( true );

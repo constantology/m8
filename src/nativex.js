@@ -1,15 +1,36 @@
 	x.cache( 'Array', function( Type ) {
+		var PROTO = Type.prototype;
+
 		def( Type, 'coerce', function( a, i, j ) {
 			if ( !got( a, 'length' ) ) return [a];
 			i = type( i ) == 'number' ? i > 0 ? i : 0 : 0;
 			j = type( j ) == 'number' ? j > i ? j : j <= 0 ? a.length + j : i + j : a.length;
 			return slice.call( a, i, j );
 		}, 'w' );
-		def( Type.prototype, 'find', function( fn, ctx ) {
-			var i = -1, l = this.length >>> 0;
-			ctx || ( ctx = this );
-			while ( ++i < l ) if ( !!fn.call( ctx, this[i], i, this ) ) return this[i];
-			return null;
+
+		defs( PROTO, {
+			find : function( fn, ctx ) {
+				var i = -1, l = this.length >>> 0;
+				ctx || ( ctx = this );
+				while ( ++i < l ) if ( !!fn.call( ctx, this[i], i, this ) ) return this[i];
+				return null;
+			},
+			invoke    : function( fn ) {
+				var args = Type.coerce( arguments, 1 );
+				return PROTO.map.call( this, function( item ) {
+					return item && typeof item[fn] == 'function' ? item[fn].apply( item, args ) : UNDEF;
+				} );
+			},
+			pluck     : function( key, existing_only ) {
+				existing_only = existing_only === true;
+				return PROTO.reduce.call( this, function( val, item ) {
+					var v = Object.value( item, key );
+
+					( existing_only && !exists( v ) ) || val.push( v );
+
+					return val;
+				}, [] );
+			}
 		}, 'w' );
 	} );
 
