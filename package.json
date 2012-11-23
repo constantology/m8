@@ -6,7 +6,7 @@
 	},
 	"description"     : "m8 is a small utility library you might find useful or just plain annoying.",
  	"devDependencies" : {
-		"catn8"       : ">= 0.0.2",
+		"catn8"       : ">= 0.0.4",
 		"chai"        : ">= 1.2.0",
 		"mocha"       : ">= 1.4.2"
  	},
