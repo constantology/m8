@@ -109,7 +109,7 @@
 			else
 				def( mod, name, describe( { value : lib }, 'ew' ) );
 
-			if ( ENV == 'browser' )
+			if ( ENV == 'browser' && mod === root ) // don't expose as amd if lib is being added to a module that will be exposed
 				typeof define != 'function' || !define.amd  || define( name, [], function() { return lib; } );
 		}
 
