@@ -938,6 +938,13 @@ Returns the `values` of the passed Object based on it's enumerable keys.
 
 ```
 
+### GET: Object.prototype.\_\_proto\_\_:String
+Some browsers — like MSIE 9 & 10 which `m8` supports — do not support the non-standard property `__proto__`.
+
+Luckily however, they do support `Object.getPrototypeOf`, which will return the same value as `__proto__`.
+
+`m8` conveniently wraps this call up inside the `__proto__` getter for those browsers, so you can (more) easily work with `Object` prototypes.
+
 ### GET: Object.prototype.\_\_type\_\_:String
 Attempts to resolve a normalised type for any type that inherits from JavaScript's `Object.prototype`. See `m8.type` for more information.
 
@@ -945,8 +952,8 @@ Attempts to resolve a normalised type for any type that inherits from JavaScript
 
 ## File size
 
-- m8.js ≅ 6.2kb (gzipped)
-- m8.min.js ≅ 3.5kb (minzipped)
+- m8.js ≅ 6.4kb (gzipped)
+- m8.min.js ≅ 3.6kb (minzipped)
 
 ## License
 

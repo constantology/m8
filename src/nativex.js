@@ -99,6 +99,12 @@
 			return ntype;
 		} }, modes.r ) );
 
+		def( Type.prototype, '__proto__', {
+			get : function() {
+				return Type.getPrototypeOf( this );
+			} // todo: set???
+		}, 'c' );
+
 		defs( Type, {
 			key    : function( item, val ) {
 				return Type.keys( Type( item ) ).find( function( key ) {

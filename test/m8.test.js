@@ -377,6 +377,31 @@ suite( 'm8', function() {
 		done();
 	} );
 
+	test( 'Object.prototype.__proto__', function( done ) {
+		function Collection() {
+			this.push.apply( this, arguments );
+			return this;
+		}
+		m8.defs( Collection.prototype = [], {
+			__type__ : 'collection',
+			slice    : function() {
+				var val = this.__proto__.__proto__.slice.apply( this, arguments );
+				return Array.isArray( val ) ? Collection.apply( Object.create( Collection.prototype ), val ) : val;
+			},
+			splice   : function() {
+				var val = this.__proto__.__proto__.splice.apply( this, arguments );
+				return Array.isArray( val ) ? Collection.apply( Object.create( Collection.prototype ), val ) : val;
+			}
+		}, 'cw', true );
+
+		var col = new Collection( 1, 2, 3, 4, 5 );
+		expect( m8.type( col.slice( 0 ) ) ).to.equal( 'collection' );
+		expect( col.slice( 1, 3 ).length ).to.equal( 2 );
+		expect( col.length ).to.equal( 5 );
+
+		done();
+	} );
+
 	test( '<static> Array.coerce returns an Array based on the passed item', function( done ) {
 		expect( Array.coerce( [1, 2, 3] ) ).to.eql( [1, 2, 3] );
 		expect( Array.coerce( { foo : 'bar' } ) ).to.eql( [{ foo : 'bar' }] );
