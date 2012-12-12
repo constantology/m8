@@ -7,7 +7,7 @@
 
 	var __name__  = '__name__', __type__ = '__type__', __xid__ = '__xid__',
 // it's a best guess as to whether the environment we're in is a browser, commonjs platform (like nodejs) or something else completely
-		AMD       = typeof define == 'function' && define.amd,
+		AMD       = !!( typeof define == 'function' && define.amd ),
 		ENV       = typeof module != 'undefined' && 'exports' in module && typeof require == 'function' ? 'commonjs' : typeof navigator != 'undefined' ? 'browser' : 'other',
 		OP        = Object.prototype, UNDEF,
 // this will be used by the bless method to check if a context root is a commonjs module or not.
