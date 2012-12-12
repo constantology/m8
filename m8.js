@@ -7,6 +7,7 @@
 
 	var __name__  = '__name__', __type__ = '__type__', __xid__ = '__xid__',
 // it's a best guess as to whether the environment we're in is a browser, commonjs platform (like nodejs) or something else completely
+		AMD       = typeof define == 'function' && define.amd,
 		ENV       = typeof module != 'undefined' && 'exports' in module && typeof require == 'function' ? 'commonjs' : typeof navigator != 'undefined' ? 'browser' : 'other',
 		OP        = Object.prototype, UNDEF,
 // this will be used by the bless method to check if a context root is a commonjs module or not.
@@ -50,7 +51,7 @@
 			return cache;
 		}, obj() ),
 		randy       = Math.random, re_global = /global|window/i,
-		re_gsub     = /\$?\{([^\}]+)\}/g,               re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
+		re_gsub     =  /\$?\{([^\}'"]+)\}/g,            re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
 		re_name     = /[\s\(]*function([^\(]+).*/,      re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
 		slice       = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
 		xcache      = {
@@ -132,6 +133,19 @@
 		return __lib__;
 	}
 
+	function define_amd( path, deps, mod ) {
+		if ( !AMD ) return;
+
+		if ( nativeType( deps ) != 'array' ) {
+			mod  = deps;
+			deps = [];
+		}
+
+		define( path, deps, function() { return mod; } );
+
+		return __lib__;
+	}
+
 	function defs( item, props, mode, overwrite, debug ) {
 		mode || ( mode = 'cw' );
 		for ( var key in props )
@@ -170,8 +184,8 @@
 			else
 				def( mod, name, describe( { value : lib }, 'ew' ) );
 
-			if ( ENV == 'browser' && mod === root ) // don't expose as amd if lib is being added to a module that will be exposed
-				typeof define != 'function' || !define.amd  || define( name, [], function() { return lib; } );
+ // don't expose as amd if lib is being added to a module that will be exposed
+			!AMD || mod !== root || define_amd( name, lib );
 		}
 
 		defs( lib, defaults, 'w', true );
@@ -533,23 +547,23 @@
 
 	defs( ( __lib__ = expose( __lib__, Name, PACKAGE ) ), {
 	// properties
-		ENV        : ENV,        global      : { value : root  },
-								 modes       : { value : modes },
+		AMD        : AMD,               ENV         : ENV,
+		global     : { value : root  }, modes       : { value : modes },
 	// methods
-		bless      : bless,      coerce      : coerce,
-		copy       : copy,       cpdef       : cpdef,
-		def        : def,        defs        : defs,
-		describe   : describe,   description : description,
-		empty      : empty,      exists      : exists,
-		expose     : expose,     format      : format, got : prop_exists.bind( null, got ),
-		gsub       : gsub,       guid        : guid,   has : prop_exists.bind( null, has ),
-		id         : id,         iter        : iter,
-		len        : len,        merge       : merge,
-		nativeType : nativeType, noop        : noop,
-		ntype      : nativeType, obj         : obj,
-		range      : range,      remove      : remove,
-		tostr      : tostr,      type        : type,
-		update     : update,     valof       : valof,
+		bless      : bless,             coerce      : coerce,
+		copy       : copy,              cpdef       : cpdef,
+		def        : def,               defs        : defs,   define : define_amd,
+		describe   : describe,          description : description,
+		empty      : empty,             exists      : exists,
+		expose     : expose,            format      : format, got    : prop_exists.bind( null, got ),
+		gsub       : gsub,              guid        : guid,   has    : prop_exists.bind( null, has ),
+		id         : id,                iter        : iter,
+		len        : len,               merge       : merge,
+		nativeType : nativeType,        noop        : noop,
+		ntype      : nativeType,        obj         : obj,
+		range      : range,             remove      : remove,
+		tostr      : tostr,             type        : type,
+		update     : update,            valof       : valof,
 		x          : x
 	}, 'w' );
 

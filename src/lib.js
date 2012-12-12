@@ -71,6 +71,19 @@
 		return __lib__;
 	}
 
+	function define_amd( path, deps, mod ) {
+		if ( !AMD ) return;
+
+		if ( nativeType( deps ) != 'array' ) {
+			mod  = deps;
+			deps = [];
+		}
+
+		define( path, deps, function() { return mod; } );
+
+		return __lib__;
+	}
+
 	function defs( item, props, mode, overwrite, debug ) {
 		mode || ( mode = 'cw' );
 		for ( var key in props )
@@ -109,8 +122,8 @@
 			else
 				def( mod, name, describe( { value : lib }, 'ew' ) );
 
-			if ( ENV == 'browser' && mod === root ) // don't expose as amd if lib is being added to a module that will be exposed
-				typeof define != 'function' || !define.amd  || define( name, [], function() { return lib; } );
+ // don't expose as amd if lib is being added to a module that will be exposed
+			!AMD || mod !== root || define_amd( name, lib );
 		}
 
 		defs( lib, defaults, 'w', true );

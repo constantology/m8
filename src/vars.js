@@ -3,6 +3,7 @@
 
 	var __name__  = '__name__', __type__ = '__type__', __xid__ = '__xid__',
 // it's a best guess as to whether the environment we're in is a browser, commonjs platform (like nodejs) or something else completely
+		AMD       = typeof define == 'function' && define.amd,
 		ENV       = typeof module != 'undefined' && 'exports' in module && typeof require == 'function' ? 'commonjs' : typeof navigator != 'undefined' ? 'browser' : 'other',
 		OP        = Object.prototype, UNDEF,
 // this will be used by the bless method to check if a context root is a commonjs module or not.
@@ -46,7 +47,7 @@
 			return cache;
 		}, obj() ),
 		randy       = Math.random, re_global = /global|window/i,
-		re_gsub     = /\$?\{([^\}]+)\}/g,               re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
+		re_gsub     =  /\$?\{([^\}'"]+)\}/g,            re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
 		re_name     = /[\s\(]*function([^\(]+).*/,      re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
 		slice       = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
 		xcache      = {
