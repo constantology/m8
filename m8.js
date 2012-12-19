@@ -1,7 +1,10 @@
 ;!function( root, Name, PACKAGE ) {
 	"use strict";
 
+
+
 /*~  src/vars.js  ~*/
+
 // if ENV === commonjs we want root to be global
 	typeof global == 'undefined' ? root : ( root = global );
 
@@ -59,7 +62,10 @@
 			'Number' : [], 'Object'  : [], 'RegExp' : [], 'String'   : []
 		};
 
+
+
 /*~  src/lib.js  ~*/
+
 	function __lib__( val ) { return val; }
 
 	function bless( ns, ctx ) {
@@ -300,8 +306,21 @@
 	}
 
 	function range( i, j ) {
+		return isNaN( i ) ? range_str( i, j ) : range_num( i, j );
+	}
+	function range_num( i, j ) {
 		var a = [i];
 		while ( ++i <= j ) a.push( i );
+		return a;
+	}
+	function range_str( i, j ) {
+		i = String( i ).charCodeAt( 0 );
+		j = String( j ).charCodeAt( 0 );
+
+		var a = [], m = -1, n = Math.abs( i - j ); --i;
+
+		while ( ++m <= n ) a.push( String.fromCharCode( ++i ) );
+
 		return a;
 	}
 
@@ -374,7 +393,10 @@
 		return o;
 	}
 
+
+
 /*~  src/lib.x.js  ~*/
+
 // Commonjs Modules 1.1.1: http://wiki.commonjs.org/wiki/Modules/1.1.1
 // notes section:          http://wiki.commonjs.org/wiki/Modules/ProposalForNativeExtension
 // specifies the possibility of sandboxing JavaScript Natives in Modules in future versions
@@ -401,7 +423,10 @@
 		Type[__xid__] = extenders.length;                           // assigned every time __lib__.x() is called, and
 	}                                                               // potentilly throwing overwrite errors.
 
+
+
 /*~  src/nativex.js  ~*/
+
 	x.cache( 'Array', function( Type ) {
 		var PROTO = Type.prototype;
 
@@ -542,7 +567,10 @@
 		}, 'w' );
 	} );
 
+
+
 /*~  src/expose.js  ~*/
+
 	iter( PACKAGE ) || ( PACKAGE = ENV == 'commonjs' ? module : root );
 
 	defs( ( __lib__ = expose( __lib__, Name, PACKAGE ) ), {
@@ -568,5 +596,7 @@
 	}, 'w' );
 
 	x( Object, Array, Boolean, Function );
+
+
 
 }( this, 'm8' );

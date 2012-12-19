@@ -579,6 +579,23 @@ Creates an empty Object using `Object.create( null )`, the Object has no constru
 
 Optionally pass an Object whose properties you want copied to the empty Object instance.
 
+### m8.range( begin:Number|String, end:Number|String ):Array
+Returns an Array starting at `begin` where each value is incremented by `1` until `end` is reached.
+
+#### Example:
+
+```javascript
+
+    m8.range(  1,   10 );  // returns => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    m8.range( 20, 1000 );  // returns => [20, 21, 22, ..., 1000]
+
+    m8.range( 'A', 'z' );  // returns => ['A', 'B', 'C', ..., 'x', 'y', 'z']
+    m8.range( 'α', 'ω' ); // returns => ['α', 'β', 'γ', ..., 'χ', 'ψ', 'ω']
+
+```
+
+**NOTE:** Only the first character will be incremented in a `String` range.
+
 ## m8.remove( item:Array, value_or_index1:Number|Mixed|Number[]|Mixed[][, value_or_index2:Number|Mixed, ..., value_or_indexN:Number|Mixed] ):item
 ## m8.remove( item:Object, property1:String|String[][, property2:String, ..., propertyN:String] ):item
 Removes items from the passed Array or Object and returns the passed Array or Object.

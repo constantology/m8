@@ -238,8 +238,21 @@
 	}
 
 	function range( i, j ) {
+		return isNaN( i ) ? range_str( i, j ) : range_num( i, j );
+	}
+	function range_num( i, j ) {
 		var a = [i];
 		while ( ++i <= j ) a.push( i );
+		return a;
+	}
+	function range_str( i, j ) {
+		i = String( i ).charCodeAt( 0 );
+		j = String( j ).charCodeAt( 0 );
+
+		var a = [], m = -1, n = Math.abs( i - j ); --i;
+
+		while ( ++m <= n ) a.push( String.fromCharCode( ++i ) );
+
 		return a;
 	}
 
