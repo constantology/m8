@@ -16,6 +16,7 @@
 		len        : len,               merge       : merge,
 		nativeType : nativeType,        noop        : noop,
 		ntype      : nativeType,        obj         : obj,
+		proto      : proto,             ptype       : ptype,
 		range      : range,             remove      : remove,
 		tostr      : tostr,             type        : type,
 		update     : update,            valof       : valof,

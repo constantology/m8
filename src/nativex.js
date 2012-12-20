@@ -84,7 +84,7 @@
 // since it internally uses __type__ which is about to be set up here.
 		def( Type.prototype, __type__, copy( { get : function() {
 			var _type_, item = this, ctor = item.constructor, ntype = nativeType( item ),
-				dtype = domType( ntype ) || ( re_global.test( ntype ) ? 'global' : false );
+				dtype = dom_type( ntype ) || ( re_global.test( ntype ) ? 'global' : false );
 
 			if ( dtype ) return dtype;
 			if ( ntype == 'number' ) return isNaN( item ) ? 'nan' : 'number';
@@ -101,8 +101,8 @@
 
 		def( Type.prototype, '__proto__', {
 			get : function() {
-				return Type.getPrototypeOf( this );
-			} // todo: set???
+				return proto( this );
+			} // todo: set, or would it be anti-spec/overkill???
 		}, 'c' );
 
 		defs( Type, {
@@ -118,8 +118,11 @@
 				}, val );
 			},
 			value  : function( item, key )  {
-				if ( isNaN( key ) ) {
-					if ( got( item, key ) ) return item[key];
+				if ( !exists( item ) ) return UNDEF;
+
+				if ( key in item ) return item[key];
+
+				if ( isNaN( +key ) ) {
 					if ( !!~key.indexOf( '.' ) ) {
 						var val; key = key.split( '.' );
 						while ( val = key.shift() )
@@ -128,8 +131,8 @@
 						return item;
 					}
 				}
-				return empty( item )
-					 ? UNDEF                    : exists( item[key] )
+
+				return item[key] !== UNDEF
 					 ? item[key]                : typeof item.get          == 'function'
 					 ? item.get( key )          : typeof item.getAttribute == 'function'
 					 ? item.getAttribute( key ) : UNDEF;

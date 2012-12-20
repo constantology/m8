@@ -41,16 +41,22 @@
 			delete modes[UNDEF];
 			return modes;
 		}(), // pre-caching common types for faster checks
-		ntype_cache = 'Array Boolean Date Function Null Number Object RegExp String Undefined'
-		.split( ' ' ).reduce( function( cache, type ) {
+		ntypes_common = 'Array Boolean Date Function Number Object RegExp String Null Undefined'.split( ' ' ),
+		ntype_cache   = ntypes_common.reduce( function( cache, type ) {
 			cache['[object ' + type + ']'] = type.toLowerCase();
 			return cache;
 		}, obj() ),
-		randy       = Math.random, re_global = /global|window/i,
-		re_gsub     =  /\$?\{([^\}'"]+)\}/g,            re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
-		re_name     = /[\s\(]*function([^\(]+).*/,      re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
-		slice       = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
-		xcache      = {
-			'Array'  : [], 'Boolean' : [], 'Date'   : [], 'Function' : [],
-			'Number' : [], 'Object'  : [], 'RegExp' : [], 'String'   : []
-		};
+		randy         = Math.random, re_global = /global|window/i,
+		re_gsub       =  /\$?\{([^\}'"]+)\}/g,            re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
+		re_name       = /[\s\(]*function([^\(]+).*/,      //re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
+/** opera has been purposefully left out for the following reasons:
+  * whose stupid decision was it to make dragonfly not work unless you have an internet connection!?
+  * the previous point is so seriously retarded it needs to be mentioned again, here.
+  * the opera prefix `O` screws with [object Object] I don't like it, so it's gonski...
+**/
+		re_tostr      = /^\[object (?:[Ww]eb[Kk]it|[Mm]oz|[Mm]s|[Kk]html){0,1}([^\]]+)\]$/,
+		slice         = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
+		xcache        = ntypes_common.slice( 0, -2 ).reduce( function( cache, type ) {
+			cache[type] = [];
+			return cache;
+		}, obj() );

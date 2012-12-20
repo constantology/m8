@@ -48,19 +48,25 @@
 			delete modes[UNDEF];
 			return modes;
 		}(), // pre-caching common types for faster checks
-		ntype_cache = 'Array Boolean Date Function Null Number Object RegExp String Undefined'
-		.split( ' ' ).reduce( function( cache, type ) {
+		ntypes_common = 'Array Boolean Date Function Number Object RegExp String Null Undefined'.split( ' ' ),
+		ntype_cache   = ntypes_common.reduce( function( cache, type ) {
 			cache['[object ' + type + ']'] = type.toLowerCase();
 			return cache;
 		}, obj() ),
-		randy       = Math.random, re_global = /global|window/i,
-		re_gsub     =  /\$?\{([^\}'"]+)\}/g,            re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
-		re_name     = /[\s\(]*function([^\(]+).*/,      re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
-		slice       = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
-		xcache      = {
-			'Array'  : [], 'Boolean' : [], 'Date'   : [], 'Function' : [],
-			'Number' : [], 'Object'  : [], 'RegExp' : [], 'String'   : []
-		};
+		randy         = Math.random, re_global = /global|window/i,
+		re_gsub       =  /\$?\{([^\}'"]+)\}/g,            re_guid   = /[xy]/g,     re_lib    = new RegExp( '^\\u005E?' + Name ),
+		re_name       = /[\s\(]*function([^\(]+).*/,      //re_vendor = /^[Ww]ebkit|[Mm]oz|O|[Mm]s|[Kk]html(.*)$/,
+/** opera has been purposefully left out for the following reasons:
+  * whose stupid decision was it to make dragonfly not work unless you have an internet connection!?
+  * the previous point is so seriously retarded it needs to be mentioned again, here.
+  * the opera prefix `O` screws with [object Object] I don't like it, so it's gonski...
+**/
+		re_tostr      = /^\[object (?:[Ww]eb[Kk]it|[Mm]oz|[Mm]s|[Kk]html){0,1}([^\]]+)\]$/,
+		slice         = Array.prototype.slice,            tpl_guid  = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
+		xcache        = ntypes_common.slice( 0, -2 ).reduce( function( cache, type ) {
+			cache[type] = [];
+			return cache;
+		}, obj() );
 
 
 
@@ -337,24 +343,33 @@
 	}
 	function remove_object( key ) { delete this[key]; }
 
+	function proto( item ) { return Object.getPrototypeOf( item ); }
 	function tostr( item ) { return OP.toString.call( item ); }
 	function valof( item ) { return OP.valueOf.call( item ); }
 
 // type methods
-	function domType( dtype ) {
-		return dtype == htmdoc ? htmdoc : ( dtype == htmcol || dtype == 'nodelist' ) ? htmcol : ( !dtype.indexOf( 'htm' ) && ( dtype.lastIndexOf( 'element' ) + 7 === dtype.length ) ) ? 'htmlelement' : false;
+	function dom_type( dtype ) {
+		return dtype == htmdoc
+			 ? htmdoc : ( dtype == htmcol || dtype == 'nodelist' )
+			 ? htmcol : ( !dtype.indexOf( 'htm' ) && ( dtype.lastIndexOf( 'element' ) + 7 === dtype.length ) )
+			 ? 'htmlelement' : false;
 	}
+//	function get_type( str_type ) { return str_type.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase(); }
+	function get_type( str_type ) { return str_type.replace( re_tostr, '$1' ).toLowerCase(); }
 	function nativeType( item ) {
 		var native_type = tostr( item );
-		if ( native_type in ntype_cache ) return ntype_cache[native_type]; // check the ntype_cache first
-		return ( ntype_cache[native_type] = native_type.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase() );
+
+		return native_type in ntype_cache // check the ntype_cache first
+			 ? ntype_cache[native_type]
+			 : ntype_cache[native_type] = get_type( native_type );
 	}
+	function ptype( item ) { return nativeType( proto( Object( item ) ) ); }
 	function type( item ) {
 		if ( item === null || item === UNDEF )
 			return false;
 
 		var t = got( item, __type__ )
-			  ? item[__type__] : Object.getPrototypeOf( item ) === null
+			  ? item[__type__] : proto( item ) === null
 			  ? 'nullobject'   : UNDEF;
 
 		return t !== 'object'
@@ -513,7 +528,7 @@
 // since it internally uses __type__ which is about to be set up here.
 		def( Type.prototype, __type__, copy( { get : function() {
 			var _type_, item = this, ctor = item.constructor, ntype = nativeType( item ),
-				dtype = domType( ntype ) || ( re_global.test( ntype ) ? 'global' : false );
+				dtype = dom_type( ntype ) || ( re_global.test( ntype ) ? 'global' : false );
 
 			if ( dtype ) return dtype;
 			if ( ntype == 'number' ) return isNaN( item ) ? 'nan' : 'number';
@@ -530,8 +545,8 @@
 
 		def( Type.prototype, '__proto__', {
 			get : function() {
-				return Type.getPrototypeOf( this );
-			} // todo: set???
+				return proto( this );
+			} // todo: set, or would it be anti-spec/overkill???
 		}, 'c' );
 
 		defs( Type, {
@@ -547,8 +562,11 @@
 				}, val );
 			},
 			value  : function( item, key )  {
-				if ( isNaN( key ) ) {
-					if ( got( item, key ) ) return item[key];
+				if ( !exists( item ) ) return UNDEF;
+
+				if ( key in item ) return item[key];
+
+				if ( isNaN( +key ) ) {
 					if ( !!~key.indexOf( '.' ) ) {
 						var val; key = key.split( '.' );
 						while ( val = key.shift() )
@@ -557,8 +575,8 @@
 						return item;
 					}
 				}
-				return empty( item )
-					 ? UNDEF                    : exists( item[key] )
+
+				return item[key] !== UNDEF
 					 ? item[key]                : typeof item.get          == 'function'
 					 ? item.get( key )          : typeof item.getAttribute == 'function'
 					 ? item.getAttribute( key ) : UNDEF;
@@ -589,6 +607,7 @@
 		len        : len,               merge       : merge,
 		nativeType : nativeType,        noop        : noop,
 		ntype      : nativeType,        obj         : obj,
+		proto      : proto,             ptype       : ptype,
 		range      : range,             remove      : remove,
 		tostr      : tostr,             type        : type,
 		update     : update,            valof       : valof,

@@ -574,10 +574,100 @@ Returns the native `type` of the passed item. For normalised types use `m8.type`
 ### m8.noop():void
 An empty Function that returns nothing.
 
+### m8.nativeType( item:Mixed ):String (alias: m8.ntype)
+Returns the native `type` of the passed item. For normalised types use `m8.type`.
+
+**Note:** All types are **always** in lowercase.
+
+#### Example:
+
+```javascript
+
+    m8.nativeType( null );                                       // returns => "null"
+
+    m8.nativeType( undefined );                                  // returns => "undefined"
+
+    m8.nativeType( [] );                                         // returns => "array"
+
+    m8.nativeType( true );                                       // returns => "boolean"
+
+    m8.nativeType( new Date() );                                 // returns => "date"
+
+    m8.nativeType( function() {} );                              // returns => "function"
+
+    m8.nativeType( 0 );                                          // returns => "number"
+
+    m8.nativeType( { enumerable : true, get : function() {} } ); // returns => "object"
+
+    m8.nativeType( m8.description( window, 'document' ) );       // returns => "object"
+
+    m8.nativeType( {} );                                         // returns => "object"
+
+    m8.nativeType( Object.create( null ) );                      // returns => "object"
+
+    m8.nativeType( /.*/ );                                       // returns => "regexp"
+
+    m8.nativeType( '' );                                         // returns => "string"
+
+    m8.nativeType( document.createElement( 'div' ) );            // returns => "htmldivelement"
+
+    m8.nativeType( document.querySelectorAll( 'div' ) );         // returns => "htmlcollection" | "nodelist"
+
+    m8.nativeType( document.getElementsByTagName( 'div' ) );     // returns => "htmlcollection" | "nodelist"
+
+    m8.nativeType( global );                                     // returns => "global"
+
+    m8.nativeType( window );                                     // returns => "global" | "window"
+
+```
+
 ### m8.obj( [props:Obejct] ):Object
 Creates an empty Object using `Object.create( null )`, the Object has no constructor and executing `Object.getPrototypeOf` on the empty Object instance will return `null` rather than `Object.prototype`.
 
 Optionally pass an Object whose properties you want copied to the empty Object instance.
+
+### m8.ptype( item:Mixed ):String
+Returns the native `type` of the passed item's `__proto__`.
+
+**Note:** All types are **always** in lowercase.
+
+#### Example:
+
+```javascript
+
+    m8.ptype( null );                                   // returns => "object"
+
+    m8.ptype( undefined );                              // returns => "object"
+
+    m8.ptype( [] );                                     // returns => "array"
+
+    m8.ptype( true );                                   // returns => "boolean"
+
+    m8.ptype( new Date() );                             // returns => "date"
+
+    m8.ptype( function() {} );                          // returns => "function"
+
+    m8.ptype( 0 );                                      // returns => "number"
+
+    m8.ptype( {} );                                     // returns => "object"
+
+    m8.ptype( Object.create( null ) );                  // returns => "null"
+
+    m8.ptype( /.*/ );                                   // returns => "regexp"
+
+    m8.ptype( '' );                                     // returns => "string"
+
+    m8.ptype( document.createElement( 'div' ) );        // returns => "object" | "xpc_..._jsclass" <- FireFox :P
+
+    m8.ptype( document.querySelectorAll( 'div' ) );     // returns => "object" | "xpc_..._jsclass"
+
+    m8.ptype( document.getElementsByTagName( 'div' ) ); // returns => "object" | "xpc_..._jsclass"
+
+    m8.ptype( global );                                 // returns => "object" | "xpc_..._jsclass"
+
+    m8.ptype( window );                                 // returns => "object" | "xpc_..._jsclass"
+
+```
 
 ### m8.range( begin:Number|String, end:Number|String ):Array
 Returns an Array starting at `begin` where each value is incremented by `1` until `end` is reached.
@@ -969,8 +1059,8 @@ Attempts to resolve a normalised type for any type that inherits from JavaScript
 
 ## File size
 
-- m8.js ≅ 6.4kb (gzipped)
-- m8.min.js ≅ 3.6kb (minzipped)
+- m8.js ≅ 6.9kb (gzipped)
+- m8.min.js ≅ 3.7kb (minzipped)
 
 ## License
 

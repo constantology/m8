@@ -291,6 +291,15 @@ suite( 'm8', function() {
 		expect( m8.nativeType( /.*/ ) ).to.equal( 'regexp' );
 		expect( m8.ntype( '' ) ).to.equal( 'string' );
 
+		if ( m8.ENV == 'browser' ) {
+		   expect( m8.ntype( document.createElement( 'div' ) ) ).to.equal( 'htmldivelement' );
+
+		   expect( m8.ntype( document.querySelectorAll( 'div' ) ) ).to.match( /htmlcollection|nodelist/ );
+		   expect( m8.ntype( document.getElementsByTagName( 'div' ) ) ).to.match( /htmlcollection|nodelist/ );
+
+		   expect( m8.ntype( m8.global ) ).to.match( /global|window/ );
+		}
+
 		done();
 	} );
 
@@ -303,6 +312,61 @@ suite( 'm8', function() {
 		expect( m8.nativeType( returned ) ).to.equal( 'object' );
 		expect( m8.nativeType( returned ) ).to.not.equal( 'nullobject' );
 		expect( m8.type( returned ) ).to.not.equal( 'object' );
+
+		done();
+	} );
+
+	test( '<static> m8.ptype', function( done ) {
+		function Collection() {
+			this.push.apply( this, arguments );
+			return this;
+		}
+		m8.defs( Collection.prototype = [], {
+			__type__ : 'collection',
+			slice    : function() {
+				var val = this.__proto__.__proto__.slice.apply( this, arguments );
+				return Array.isArray( val ) ? Collection.apply( Object.create( Collection.prototype ), val ) : val;
+			},
+			splice   : function() {
+				var val = this.__proto__.__proto__.splice.apply( this, arguments );
+				return Array.isArray( val ) ? Collection.apply( Object.create( Collection.prototype ), val ) : val;
+			}
+		}, 'cw', true );
+
+		var col    = new Collection( 1, 2, 3, 4, 5 ),
+			re_dom = /object|xpc_.*/;
+
+		expect( m8.ntype( col ) ).to.equal( 'object' );
+		expect( m8.ptype( col ) ).to.equal( 'array' );
+
+		expect( m8.ntype( col.slice( 0 ) ) ).to.equal( 'object' );
+		expect( m8.ptype( col.slice( 0 ) ) ).to.equal( 'array' );
+
+		expect( m8.ptype( null ) ).to.equal( 'object' );
+		expect( m8.ptype( undefined ) ).to.equal( 'object' );
+		expect( m8.ptype( [] ) ).to.equal( 'array' );
+		expect( m8.ptype( true ) ).to.equal( 'boolean' );
+		expect( m8.ptype( new Date() ) ).to.equal( 'date' );
+		expect( m8.ptype( function() {} ) ).to.equal( 'function' );
+		expect( m8.ptype( 0 ) ).to.equal( 'number' );
+		expect( m8.ptype( NaN ) ).to.equal( 'number' );
+		expect( m8.ptype( { get : function() {} } ) ).to.equal( 'object' );
+		expect( m8.ptype( { set : function() {} } ) ).to.equal( 'object' );
+		expect( m8.ptype( m8.describe( 'foo', 'ce' ) ) ).to.equal( 'object' );
+		expect( m8.ptype( m8.description( Array.prototype, 'join' ) ) ).to.equal( 'object' );
+		expect( m8.ptype( {} ) ).to.equal( 'object' );
+		expect( m8.ptype( Object.create( null ) ) ).to.equal( 'null' );
+		expect( m8.ptype( /.*/ ) ).to.equal( 'regexp' );
+		expect( m8.ptype( '' ) ).to.equal( 'string' );
+
+		if ( m8.ENV == 'browser' ) {
+		   expect( m8.ptype( document.createElement( 'div' ) ) ).to.match( re_dom );
+
+		   expect( m8.ptype( document.querySelectorAll( 'div' ) ) ).to.match( re_dom  );
+		   expect( m8.ptype( document.getElementsByTagName( 'div' ) ) ).to.match( re_dom  );
+
+		   expect( m8.ptype( m8.global ) ).to.match( re_dom );
+		}
 
 		done();
 	} );
@@ -361,6 +425,15 @@ suite( 'm8', function() {
 		expect( m8.type( Object.create( null ) ) ).to.equal( 'nullobject' );
 		expect( m8.type( /.*/ ) ).to.equal( 'regexp' );
 		expect( m8.type( '' ) ).to.equal( 'string' );
+
+		if ( m8.ENV == 'browser' ) {
+		   expect( m8.type( document.createElement( 'div' ) ) ).to.equal( 'htmlelement' );
+
+		   expect( m8.type( document.querySelectorAll( 'div' ) ) ).to.equal( 'htmlcollection' );
+		   expect( m8.type( document.getElementsByTagName( 'div' ) ) ).to.equal( 'htmlcollection' );
+
+		   expect( m8.type( m8.global ) ).to.equal( 'global' );
+		}
 
 		done();
 	} );

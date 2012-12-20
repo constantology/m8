@@ -269,24 +269,33 @@
 	}
 	function remove_object( key ) { delete this[key]; }
 
+	function proto( item ) { return Object.getPrototypeOf( item ); }
 	function tostr( item ) { return OP.toString.call( item ); }
 	function valof( item ) { return OP.valueOf.call( item ); }
 
 // type methods
-	function domType( dtype ) {
-		return dtype == htmdoc ? htmdoc : ( dtype == htmcol || dtype == 'nodelist' ) ? htmcol : ( !dtype.indexOf( 'htm' ) && ( dtype.lastIndexOf( 'element' ) + 7 === dtype.length ) ) ? 'htmlelement' : false;
+	function dom_type( dtype ) {
+		return dtype == htmdoc
+			 ? htmdoc : ( dtype == htmcol || dtype == 'nodelist' )
+			 ? htmcol : ( !dtype.indexOf( 'htm' ) && ( dtype.lastIndexOf( 'element' ) + 7 === dtype.length ) )
+			 ? 'htmlelement' : false;
 	}
+//	function get_type( str_type ) { return str_type.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase(); }
+	function get_type( str_type ) { return str_type.replace( re_tostr, '$1' ).toLowerCase(); }
 	function nativeType( item ) {
 		var native_type = tostr( item );
-		if ( native_type in ntype_cache ) return ntype_cache[native_type]; // check the ntype_cache first
-		return ( ntype_cache[native_type] = native_type.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase() );
+
+		return native_type in ntype_cache // check the ntype_cache first
+			 ? ntype_cache[native_type]
+			 : ntype_cache[native_type] = get_type( native_type );
 	}
+	function ptype( item ) { return nativeType( proto( Object( item ) ) ); }
 	function type( item ) {
 		if ( item === null || item === UNDEF )
 			return false;
 
 		var t = got( item, __type__ )
-			  ? item[__type__] : Object.getPrototypeOf( item ) === null
+			  ? item[__type__] : proto( item ) === null
 			  ? 'nullobject'   : UNDEF;
 
 		return t !== 'object'
