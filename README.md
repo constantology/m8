@@ -657,15 +657,25 @@ Returns the native `type` of the passed item's `__proto__`.
 
     m8.ptype( '' );                                     // returns => "string"
 
-    m8.ptype( document.createElement( 'div' ) );        // returns => "object" | "xpc_..._jsclass" <- FireFox :P
+    m8.ptype( document.createElement( 'div' ) );        // returns => "object"         <- WebKit
+                                                        // | "xpc_..._jsclass"         <- FireFox
+                                                        // | "htmldivelementprototype" <- MSIE >= 9
 
-    m8.ptype( document.querySelectorAll( 'div' ) );     // returns => "object" | "xpc_..._jsclass"
+    m8.ptype( document.querySelectorAll( 'div' ) );     // returns => "object"         <- WebKit
+                                                        // | "xpc_..._jsclass"         <- FireFox
+                                                        // | "htmlcollectionprototype" <- MSIE >= 9
 
-    m8.ptype( document.getElementsByTagName( 'div' ) ); // returns => "object" | "xpc_..._jsclass"
+    m8.ptype( document.getElementsByTagName( 'div' ) ); // returns => "object"         <- WebKit
+                                                        // | "xpc_..._jsclass"         <- FireFox
+                                                        // | "nodelistprototype"       <- MSIE >= 9
 
-    m8.ptype( global );                                 // returns => "object" | "xpc_..._jsclass"
+    m8.ptype( global );                                 // returns => "object"         <- WebKit
+                                                        // | "xpc_..._jsclass"         <- FireFox
+                                                        // | "windowprototype"         <- MSIE >= 9
 
-    m8.ptype( window );                                 // returns => "object" | "xpc_..._jsclass"
+    m8.ptype( window );                                 // returns => "object"         <- WebKit
+                                                        // | "xpc_..._jsclass"         <- FireFox
+                                                        // | "windowprototype"         <- MSIE >= 9 (I like the MSIE ones the best!)
 
 ```
 

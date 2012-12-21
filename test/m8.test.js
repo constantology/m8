@@ -334,7 +334,15 @@ suite( 'm8', function() {
 		}, 'cw', true );
 
 		var col    = new Collection( 1, 2, 3, 4, 5 ),
-			re_dom = /object|xpc_.*/;
+// for any Node `__proto__`:
+// - webkit  returns `object` as the type
+// - firefox returns `xpc_..._jsclass` something or other
+// - msie >=9 returns `html*elementprototype` for HTMLElement;
+//                    `htmlcollectionprototype` for HTMLCollection (querySelectorAll);
+//                    `nodelistprototype` for NodeList (getElementsByTagName);
+//                    `windowprototype` for global/window
+// personally I like what MSIE returns the bestest! :D
+			re_dom = /object|xpc_.*|(html|node|window).*prototype/;
 
 		expect( m8.ntype( col ) ).to.equal( 'object' );
 		expect( m8.ptype( col ) ).to.equal( 'array' );
@@ -484,6 +492,8 @@ suite( 'm8', function() {
 		expect( m8.type( col.slice( 0 ) ) ).to.equal( 'collection' );
 		expect( col.slice( 1, 3 ).length ).to.equal( 2 );
 		expect( col.length ).to.equal( 5 );
+		expect( m8.type( col.__proto__ ) ).to.equal( 'collection' );
+		expect( m8.type( col.__proto__.__proto__ ) ).to.equal( 'array' );
 
 		done();
 	} );
