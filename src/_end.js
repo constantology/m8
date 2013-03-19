@@ -1,1 +1,1 @@
-}( this, 'm8' );
+}( typeof global !== 'undefined' ? global : this, 'm8' );

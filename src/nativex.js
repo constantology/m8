@@ -61,6 +61,7 @@
 				}, 'c', true );
 				return this;
 			} };
+
 		desc[__name__] = { get : function() {
 			if ( !this[__xname__] ) {
 				var fn     = this.valueOf(), // if this function is mimicking another, get the mimicked function

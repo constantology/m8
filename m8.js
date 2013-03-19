@@ -5,6 +5,7 @@
 
 /*~  src/vars.js  ~*/
 
+
 // if ENV === commonjs we want root to be global
 	typeof global == 'undefined' ? root : ( root = global );
 
@@ -70,7 +71,9 @@
 
 
 
+
 /*~  src/lib.js  ~*/
+
 
 	function __lib__( val ) { return val; }
 
@@ -410,7 +413,9 @@
 
 
 
+
 /*~  src/lib.x.js  ~*/
+
 
 // Commonjs Modules 1.1.1: http://wiki.commonjs.org/wiki/Modules/1.1.1
 // notes section:          http://wiki.commonjs.org/wiki/Modules/ProposalForNativeExtension
@@ -440,7 +445,9 @@
 
 
 
+
 /*~  src/nativex.js  ~*/
+
 
 	x.cache( 'Array', function( Type ) {
 		var PROTO = Type.prototype;
@@ -505,6 +512,7 @@
 				}, 'c', true );
 				return this;
 			} };
+
 		desc[__name__] = { get : function() {
 			if ( !this[__xname__] ) {
 				var fn     = this.valueOf(), // if this function is mimicking another, get the mimicked function
@@ -587,7 +595,9 @@
 
 
 
+
 /*~  src/expose.js  ~*/
+
 
 	iter( PACKAGE ) || ( PACKAGE = ENV == 'commonjs' ? module : root );
 
@@ -618,4 +628,5 @@
 
 
 
-}( this, 'm8' );
+
+}( typeof global !== 'undefined' ? global : this, 'm8' );
