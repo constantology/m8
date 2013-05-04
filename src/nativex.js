@@ -2,9 +2,9 @@
 		var PROTO = Type.prototype;
 
 		def( Type, 'coerce', function( a, i, j ) {
-			if ( !got( a, 'length' ) ) return [a];
-			i = type( i ) == 'number' ? i > 0 ? i : 0 : 0;
-			j = type( j ) == 'number' ? j > i ? j : j <= 0 ? a.length + j : i + j : a.length;
+			if ( !( 'length' in Object( a ) ) ) return [a];
+			i = !isNaN( i ) ? i > 0 ? i : 0 : 0;
+			j = !isNaN( j ) ? j > i ? j : j <= 0 ? a.length + j : i + j : a.length;
 			return slice.call( a, i, j );
 		}, 'w' );
 

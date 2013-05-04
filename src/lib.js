@@ -30,8 +30,17 @@
 	}
 
 	function copy( target, source, no_overwrite ) {
-		no_overwrite = no_overwrite === true; source || ( source = target, target = obj() );
-		for ( var key in source ) !has( source, key ) || ( no_overwrite && has( target, key ) ) || ( target[key] = source[key] );
+		no_overwrite = no_overwrite === true;
+		if ( !source ) {
+			source = target;
+			target = obj();
+		}
+
+		source = Object( source );
+
+		for ( var key in source )
+			if ( OP.hasOwnProperty.call( source, key ) && ( no_overwrite !== true || !OP.hasOwnProperty.call( target, key ) ) )
+				target[key] = source[key];
 		return target;
 	}
 
@@ -45,9 +54,9 @@
 
 	function def( item, name, desc ) {
 		var args    = slice.call( arguments, 3 ),
-			defined = got( item, name ), debug, mode, ntype, overwrite;
+			defined = name in Object( item ), debug, mode, ntype, overwrite;
 
-		switch ( nativeType( args[0] ) ) {
+		switch ( typeof args[0] ) {
 			case 'string'  : mode = modes[args.shift()]; break;
 			case 'object'  : mode = args.shift();        break;
 			default        :
@@ -154,7 +163,7 @@
 		return OP.hasOwnProperty.call( Object( item ), String( property ) );
 	}
 
-	function id( item, prefix ) { return item ? got( item, 'id' ) && !empty( item.id ) ? item.id : ( item.id = id_create( prefix ) ) : id_create( prefix ); }
+	function id( item, prefix ) { return item ? 'id' in Object( item ) && !empty( item.id ) ? item.id : ( item.id = id_create( prefix ) ) : id_create( prefix ); }
 	function id_create( prefix ) { return ( prefix || id_prefix ) + '-' + ( ++id_count ); }
 
 	function is_mod( mod ) {
@@ -163,27 +172,27 @@
 		catch ( e ) { return false; }
 	}
 
-	function iter( item ) { return got( item, 'length' ) || nativeType( item ) == 'object'; }
+	function iter( item ) { return exists( item ) && ( ( 'length' in Object( item ) ) || typeof item == 'object' ); }
 
 	function len( item ) { return ( 'length' in ( item = Object( item ) ) ? item : Object.keys( item ) ).length; }
-	
+
 	function merge( target, source ) {
 		var ntype;
-		
+
 		if ( !source ) {
 			switch ( ntype = nativeType( target ) ) {
-				case 'array' : case 'object' : 
-					source = target; 
+				case 'array' : case 'object' :
+					source = target;
 					target = new ( source.constructor || Object ); break;
 				default      : return target;
-			} 
+			}
 		}
 		else ntype = nativeType( source );
-		
+
 		switch ( ntype ) {
 			case 'object' :
 				return Object.keys( source ).reduce( merge_object, { source : source, target : target } ).target;
-			case 'array'  : 
+			case 'array'  :
 				target.length = source.length; // remove any extra items on the merged Array
 				return source.reduce( merge_array, target );
 			default       : return source;
@@ -283,7 +292,7 @@
 //	function get_type( str_type ) { return str_type.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase(); }
 	function get_type( str_type ) { return str_type.replace( re_tostr, '$1' ).toLowerCase(); }
 	function nativeType( item ) {
-		var native_type = tostr( item );
+		var native_type = OP.toString.call( item );
 
 		return native_type in ntype_cache // check the ntype_cache first
 			 ? ntype_cache[native_type]
@@ -294,7 +303,7 @@
 		if ( item === null || item === UNDEF )
 			return false;
 
-		var t = got( item, __type__ )
+		var t = __type__ in Object( item )
 			  ? item[__type__] : proto( item ) === null
 			  ? 'nullobject'   : UNDEF;
 
@@ -317,7 +326,7 @@
 	}
 
 	function update_array( target, source, i ) {
-		target[i] = !got( target, i )
+		target[i] = !( i in Object( target ) )
 				  ?  merge( source )
 				  :  nativeType( target[i] ) == nativeType( source )
 				  ?  update( target[i], source )
@@ -326,7 +335,7 @@
 	}
 
 	function update_object( o, key ) {
-		o.target[key] = !got( o.target, key )
+		o.target[key] = !( key in Object( o.target ) )
 					  ?  merge( o.source[key] )
 					  :  nativeType( o.target[key] ) == nativeType( o.source[key] )
 					  ?  update( o.target[key], o.source[key] )

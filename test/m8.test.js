@@ -12,7 +12,7 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.bless', function( done ) {
 		var expected = { foo : { bar : 'hello' } };
 
@@ -32,7 +32,7 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.coerce', function( done ) {
 		expect( m8.coerce( 'false'     ) ).to.equal( false );
 		expect( m8.coerce( 'null'      ) ).to.equal( null );
@@ -50,10 +50,10 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.copy', function( done ) {
 		var expected = { foo : { bar : 'hello' } };
-		
+
 		expect( m8.copy( {}, expected ) ).to.eql( expected );
 		expect( m8.copy( expected, { foo : { bar : 'goodbye' } }, true ) ).to.eql( expected );
 		expect( m8.copy( { foo : { bar : 'goodbye' } }, expected ) ).to.eql( expected );
@@ -92,7 +92,7 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.def', function( done ) {
 		var o = {};
 
@@ -107,7 +107,7 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.defs', function( done ) {
 		var o = {};
 
@@ -124,10 +124,10 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.describe', function( done ) {
 		function getter() {} function setter() {}
-		
+
 		expect( m8.describe( 'foo', 'r' ) ).to.eql( { configurable : false, enumerable : false, value : 'foo', writable : false } );
 		expect( m8.describe( { value : 'bar' }, 'cw' ) ).to.eql( { configurable : true, enumerable : false, value : 'bar', writable : true } );
 		expect( m8.describe( { get : getter, set : setter }, m8.modes.c ) ).to.eql( { configurable : true, enumerable : false, get : getter, set : setter, writable : false } );
@@ -135,7 +135,7 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.empty', function( done ) {
 		expect( m8.empty( '' ) ).to.equal( true );
 		expect( m8.empty( [] ) ).to.equal( true );
@@ -151,7 +151,7 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.exists', function( done ) {
 		expect( m8.exists( 0 ) ).to.equal( true );
 		expect( m8.exists( false ) ).to.equal( true );
@@ -169,10 +169,10 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.got', function( done ) {
 		function Test( val ) { this.value = val; } Test.prototype = { foo : 'bar', baz : 'bam' };
-		
+
 		expect( m8.got( { foo : 'bar' }, 'foo' ) ).to.equal( true );
 		expect( m8.got( [1, 2, 3], 'length' ) ).to.equal( true );
 		expect( m8.got( { foo : 'bar' }, 'bar' ) ).to.equal( false );
@@ -204,10 +204,10 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.has', function( done ) {
 		function Test( val ) { this.value = val; } Test.prototype = { foo : 'bar', baz : 'bam' };
-		
+
 		expect( m8.has( { foo : 'bar' }, 'foo' ) ).to.equal( true );
 		expect( m8.has( [1, 2, 3], 'length' ) ).to.equal( true );
 		expect( m8.has( { foo : 'bar' }, 'bar' ) ).to.equal( false );
@@ -224,7 +224,7 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.id', function( done ) {
 		var expected = { id : 'foo' }, empty_obj = {};
 
@@ -235,15 +235,18 @@ suite( 'm8', function() {
 
 		done();
 	} );
-	
+
 	test( '<static> m8.iter', function( done ) {
+		var undef;
 		expect( m8.iter( [] ) ).to.equal( true );
 		expect( m8.iter( {} ) ).to.equal( true );
 		expect( m8.iter( m8.obj() ) ).to.equal( true );
 		expect( m8.iter( '' ) ).to.equal( true );
+		expect( m8.iter( new Date() ) ).to.equal( true );
+		expect( m8.iter( /.*/ ) ).to.equal( true );
+		expect( m8.iter( undef ) ).to.equal( false );
 		expect( m8.iter( null ) ).to.equal( false );
 		expect( m8.iter( 3 ) ).to.equal( false );
-		expect( m8.iter( new Date() ) ).to.equal( false );
 
 		done();
 	} );
@@ -402,7 +405,7 @@ suite( 'm8', function() {
 
 	test( '<static> m8.remove', function( done ) {
 		var expected = { one : 1, three : 3, five : 5 };
-		
+
 		expect( m8.remove( { one : 1, two : 2, three : 3, four : 4, five : 5 }, 'two', 'four' ) ).to.eql( expected );
 		expect( m8.remove( { one : 1, two : 2, three : 3, four : 4, five : 5 }, ['two', 'four'] ) ).to.eql( expected );
 
@@ -571,7 +574,7 @@ suite( 'm8', function() {
 		Test.prototype = {
 			get : function get() {}, set : function set() {}, test : function() {}
 		};
-		
+
 		expect( function( one ){}.__name__ ).to.equal( 'anonymous' );
 		expect( function foo( one, two, three ){}.__name__ ).to.equal( 'foo' );
 		expect( m8.coerce.__name__ ).to.equal( 'coerce' );
@@ -588,7 +591,7 @@ suite( 'm8', function() {
 		function one() {}
 		function two() {}
 		two.mimic( one );
-		
+
 		expect( one ).to.not.equal(  two );
 		expect( one ).to.not.equal( two );
 		expect( one.valueOf()  ).to.equal( two.valueOf()  );
@@ -614,7 +617,7 @@ suite( 'm8', function() {
 
 	test( '<static> Object.value', function( done ) {
 		var d = { one : { two : { three : true, four : [1, 2, 3, 4] } } };
-		
+
 		expect( Object.value( d, 'one' ) ).to.eql( d.one );
 		expect( Object.value( d, 'one.two' ) ).to.eql( d.one.two );
 		expect( Object.value( d, 'one.two.three' ) ).to.eql( d.one.two.three );
