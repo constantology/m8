@@ -61,8 +61,11 @@
 			case 'object'  : mode = args.shift();        break;
 			default        :
 				 ntype = nativeType( desc );
-				 mode  = ntype != 'object' && defined ? description( item, name ) : null;
-				!mode || ( mode = ntype == 'function' ? modes.cw : modes.cew );
+				 mode  = ntype != 'object' && defined
+				 	   ? description( item, name )
+				 	   : ntype == 'function'
+				 	   ? modes.cw
+				 	   : modes.cew;
 		}
 		overwrite = args.shift() === true;
 		debug     = args.shift() === true;
@@ -186,7 +189,7 @@
 	function len( item ) { return ( 'length' in ( item = Object( item ) ) ? item : Object.keys( item ) ).length; }
 
 	function merge( target, source ) {
-		if ( !source ) {
+		if ( source === UNDEF ) {
 			if ( !target ) // todo: test
 				return  target;
 
