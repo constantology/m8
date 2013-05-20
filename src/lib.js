@@ -327,12 +327,13 @@
 			  ? item[__type__] : proto( item ) === null
 			  ? 'nullobject'   : UNDEF;
 
-		return t !== 'object'
-			 ? t
-			 : ( prop_exists( has, item, 'configurable', 'enumerable', 'writable' ) && has( item, 'value' )
-			 ||  prop_exists( has, item, 'get', 'set' ) )
-			 ? 'descriptor'
-			 : t;
+		return t;
+//		return t !== 'object'
+//			 ? t
+//			 : ( prop_exists( has, item, 'configurable', 'enumerable', 'writable' ) && has( item, 'value' )
+//			 ||  prop_exists( has, item, 'get', 'set' ) )
+//			 ? 'descriptor'
+//			 : t;
 	}
 
 	function update( target, source ) {
