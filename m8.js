@@ -246,38 +246,58 @@
 		catch ( e ) { return false; }
 	}
 
+	function is_plain_object( item ) {
+		if ( item === UNDEF || item === null || typeof item !== 'object' )
+			return false;
+
+		var proto = Object.getPrototypeOf( item );
+
+		return !!( proto === null || proto.constructor === Object );
+	}
+
 	function iter( item ) { return exists( item ) && ( ( 'length' in Object( item ) ) || typeof item == 'object' ); }
 
 	function len( item ) { return ( 'length' in ( item = Object( item ) ) ? item : Object.keys( item ) ).length; }
 
 	function merge( target, source ) {
-		var ntype;
-
 		if ( !source ) {
-			switch ( ntype = nativeType( target ) ) {
-				case 'array' : case 'object' :
-					source = target;
-					target = new ( source.constructor || Object ); break;
-				default      : return target;
-			}
-		}
-		else ntype = nativeType( source );
+			if ( !target ) // todo: test
+				return  target;
 
-		switch ( ntype ) {
-			case 'object' :
-				return Object.keys( source ).reduce( merge_object, { source : source, target : target } ).target;
-			case 'array'  :
-				target.length = source.length; // remove any extra items on the merged Array
-				return source.reduce( merge_array, target );
-			default       : return source;
+			if ( Array.isArray( target ) )
+				return  target.reduce( merge_array, [] );
+
+			else if ( is_plain_object( target ) )
+				return  Object.keys( target ).reduce( merge_object, {
+							source : target,
+							target : obj()
+						} ).target;
+
+			return target;
 		}
+
+		if ( Array.isArray( source ) ) {
+			if ( !Array.isArray( target ) )
+				target = [];
+			else
+				target.length = source.length; // remove any extra items on the merged Array
+
+			return  source.reduce( merge_array, target );
+		}
+		else if ( is_plain_object( source ) )
+			return  Object.keys( source ).reduce( merge_object, {
+						source : source,
+						target : is_plain_object( target ) ? target : obj()
+					} ).target;
+
+		return source;
 	}
 	function merge_array( target, source, i ) {
-		target[i] = nativeType( target[i] ) === nativeType( source ) ? merge( target[i], source ) : merge( source );
+		target[i] = merge( target[i], source );
 		return target;
 	}
 	function merge_object( o, key ) {
-		o.target[key] = nativeType( o.target[key] ) === nativeType( o.source[key] ) ? merge( o.target[key], o.source[key] ) : merge( o.source[key] );
+		o.target[key] = merge( o.target[key], o.source[key] );
 		return o;
 	}
 
@@ -392,28 +412,34 @@
 	function update( target, source ) {
 		if ( !source ) return merge( target );
 
-		switch ( nativeType( source ) ) {
-			case 'object' : return Object.keys( source ).reduce( update_object, { source : source, target : target } ).target;
-			case 'array'  : return source.reduce( update_array, target );
-			default       : return target;
+		if ( target === UNDEF || target === null )
+			return merge( source );
+
+		if ( Array.isArray( source ) ) {
+			if ( !Array.isArray( target ) )
+				return target;
+
+			return source.reduce( update_array, target )
 		}
+		else if ( is_plain_object( source ) ) {
+			if ( !is_plain_object( target ) )
+				return target;
+
+			return Object.keys( source ).reduce( update_object, { source : source, target : target } ).target;
+		}
+
+		return target;
 	}
 
 	function update_array( target, source, i ) {
-		target[i] = !( i in Object( target ) )
-				  ?  merge( source )
-				  :  nativeType( target[i] ) == nativeType( source )
-				  ?  update( target[i], source )
-				  :  target[i];
+		target[i] = update( target[i], source );
+
 		return target;
 	}
 
 	function update_object( o, key ) {
-		o.target[key] = !( key in Object( o.target ) )
-					  ?  merge( o.source[key] )
-					  :  nativeType( o.target[key] ) == nativeType( o.source[key] )
-					  ?  update( o.target[key], o.source[key] )
-					  :  o.target[key];
+		o.target[key] = update( o.target[key], o.source[key] );
+
 		return o;
 	}
 
@@ -608,12 +634,12 @@
 	// methods
 		bless      : bless,             coerce      : coerce,
 		copy       : copy,              cpdef       : cpdef,
-		def        : def,               defs        : defs,   define : define_amd,
+		def        : def,               defs        : defs,            define : define_amd,
 		describe   : describe,          description : description,
 		empty      : empty,             exists      : exists,
-		expose     : expose,            format      : format, got    : prop_exists.bind( null, got ),
-		gsub       : gsub,              guid        : guid,   has    : prop_exists.bind( null, has ),
-		id         : id,                iter        : iter,
+		expose     : expose,            format      : format,          got    : prop_exists.bind( null, got ),
+		gsub       : gsub,              guid        : guid,            has    : prop_exists.bind( null, has ),
+		id         : id,                isObject    : is_plain_object, iter   : iter,
 		len        : len,               merge       : merge,
 		nativeType : nativeType,        noop        : noop,
 		ntype      : nativeType,        obj         : obj,

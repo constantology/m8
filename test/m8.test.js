@@ -236,6 +236,22 @@ suite( 'm8', function() {
 		done();
 	} );
 
+	test( '<static> m8.isObject', function( done ) {
+		expect( m8.isObject( {} ) ).to.be.true;
+		expect( m8.isObject( m8.obj() ) ).to.be.true;
+		expect( m8.isObject( Object.create( null ) ) ).to.be.true;
+		expect( m8.isObject( Object.create( Object.prototype ) ) ).to.be.true;
+		expect( m8.isObject( Object.create( Object.getPrototypeOf( {} ) ) ) ).to.be.true;
+		expect( m8.isObject( Object.create( new Object() ) ) ).to.be.true;
+
+		expect( m8.isObject( [] ) ).to.be.false;
+		expect( m8.isObject( Object.create( Number.prototype ) ) ).to.be.false;
+		expect( m8.isObject( Object.create( Object.getPrototypeOf( Object( true ) ) ) ) ).to.be.false;
+		expect( m8.isObject( Object.create( new RegExp( '.*' ) ) ) ).to.be.false;
+
+		done();
+	} );
+
 	test( '<static> m8.iter', function( done ) {
 		var undef;
 		expect( m8.iter( [] ) ).to.equal( true );
