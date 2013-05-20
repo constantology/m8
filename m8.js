@@ -137,9 +137,12 @@
 				 ntype = nativeType( desc );
 				 mode  = ntype != 'object' && defined
 				 	   ? description( item, name )
-				 	   : ntype == 'function'
-				 	   ? modes.cw
-				 	   : modes.cew;
+				 	   : null;
+
+				if ( !mode )
+					mode = ntype == 'function'
+				 		 ? modes.cw
+				 		 : modes.cew;
 		}
 		overwrite = args.shift() === true;
 		debug     = args.shift() === true;
@@ -264,7 +267,7 @@
 
 	function merge( target, source ) {
 		if ( source === UNDEF ) {
-			if ( !target ) // todo: test
+			if ( target === UNDEF ) // todo: test
 				return  target;
 
 			if ( Array.isArray( target ) )
@@ -285,7 +288,7 @@
 			else
 				target.length = source.length; // remove any extra items on the merged Array
 
-			return  source.reduce( merge_array, target );
+				return source.reduce( merge_array, target );
 		}
 		else if ( is_plain_object( source ) )
 			return  Object.keys( source ).reduce( merge_object, {
@@ -414,7 +417,7 @@
 	}
 
 	function update( target, source ) {
-		if ( !source ) return merge( target );
+		if ( source === UNDEF ) return merge( target );
 
 		if ( target === UNDEF || target === null )
 			return merge( source );
@@ -430,7 +433,7 @@
 				return target;
 
 			return Object.keys( source ).reduce( update_object, { source : source, target : target } ).target;
-		}
+	}
 
 		return target;
 	}
