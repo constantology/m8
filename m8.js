@@ -75,10 +75,11 @@
 	function __lib__( val ) { return val; }
 
 	function bless( ns, ctx ) {
-		switch( nativeType( ns ) ) {
-			case 'array'  :                       break;
-			case 'string' : ns = ns.split( '.' ); break;
-			default       : return bless_ctx( ctx );
+		if ( !Array.isArray( ns ) ) {
+			if ( typeof ns == 'string' )
+				ns = ns.split( '.' );
+			else
+				return bless_ctx( ctx );
 		}
 
 		if ( re_lib.test( ns[0] ) ) { ctx = __lib__; ns.shift(); }
@@ -163,7 +164,7 @@
 	function define_amd( path, deps, mod ) {
 		if ( !AMD ) return;
 
-		if ( nativeType( deps ) != 'array' ) {
+		if ( Array.isArray( deps ) ) {
 			mod  = deps;
 			deps = [];
 		}
