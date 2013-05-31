@@ -34,7 +34,7 @@
 		no_overwrite = no_overwrite === true;
 		if ( !source ) {
 			source = target;
-			target = obj();
+			target = {};
 		}
 
 		source = Object( source );
@@ -203,7 +203,7 @@
 			else if ( is_plain_object( target ) )
 				return  Object.keys( target ).reduce( merge_object, {
 							source : target,
-							target : obj()
+							target : {}
 						} ).target;
 
 			return target;
@@ -220,7 +220,7 @@
 		else if ( is_plain_object( source ) )
 			return  Object.keys( source ).reduce( merge_object, {
 						source : source,
-						target : is_plain_object( target ) ? target : obj()
+						target : is_plain_object( target ) ? target : {}
 					} ).target;
 
 		return source;
@@ -310,11 +310,11 @@
 	function valof( item ) { return OP.valueOf.call( item ); }
 
 // type methods
-	function dom_type( dtype ) {
+	function dom_type( dtype, item ) {
 		return dtype == htmdoc
 			 ? htmdoc : ( dtype == htmcol || dtype == 'nodelist' )
 			 ? htmcol : ( !dtype.indexOf( 'htm' ) && ( dtype.lastIndexOf( 'element' ) + 7 === dtype.length ) )
-			 ? 'htmlelement' : false;
+			 ? 'htmlelement' : item === root ? 'global' : false;
 	}
 //	function get_type( str_type ) { return str_type.split( ' ' )[1].split( ']' )[0].replace( re_vendor, '$1' ).toLowerCase(); }
 	function get_type( str_type ) { return str_type.replace( re_tostr, '$1' ).toLowerCase(); }
@@ -329,6 +329,8 @@
 	function type( item ) {
 		if ( item === null || item === UNDEF )
 			return false;
+
+		if ( item === root ) return 'global'; // quick fix for android
 
 		var t = __type__ in Object( item )
 			  ? item[__type__] : proto( item ) === null

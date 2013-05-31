@@ -85,7 +85,7 @@
 // since it internally uses __type__ which is about to be set up here.
 		def( Type.prototype, __type__, copy( { get : function() {
 			var _type_, item = this, ctor = item.constructor, ntype = nativeType( item ),
-				dtype = dom_type( ntype ) || ( re_global.test( ntype ) ? 'global' : false );
+				dtype = dom_type( ntype, item ) || ( re_global.test( ntype ) ? 'global' : false );
 
 			if ( dtype ) return dtype;
 			if ( ntype == 'number' ) return isNaN( item ) ? 'nan' : 'number';
