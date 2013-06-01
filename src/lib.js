@@ -59,7 +59,10 @@
 
 		switch ( typeof args[0] ) {
 			case 'string'  : mode = modes[args.shift()]; break;
-			case 'object'  : mode = args.shift();        break;
+			case 'object'  : mode = args.shift();
+				if ( desc === null )
+					desc = { value : null };
+				break;
 			default        :
 				 ntype = nativeType( desc );
 				 mode  = ntype != 'object' && defined
